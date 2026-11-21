@@ -1,0 +1,546 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 77;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		002B9DE3588B72A950411CDB /* TrajectorySolverTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40845D62BB00974842BFB3C0 /* TrajectorySolverTests.swift */; };
+		0A845F75053D717EF07FDF70 /* TrajectoryTableView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA0F2DDA56C0B1BD5EA44FEF /* TrajectoryTableView.swift */; };
+		104F94A43DB5F10D47B91FA2 /* ElevationProviding.swift in Sources */ = {isa = PBXBuildFile; fileRef = 883E6DA401A9808917069BD6 /* ElevationProviding.swift */; };
+		193FB80DDDF8879054CF6DFF /* RootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7C3202124FDF4AA471749B8 /* RootView.swift */; };
+		1BDB40593F9B19B8090665E6 /* Coriolis.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D71F99B4DF7A73D08045CBF /* Coriolis.swift */; };
+		203538512D2AF03AA22DED3C /* SolutionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D69FCD257CA18DB114D3771C /* SolutionView.swift */; };
+		216AE4385F74A5A40D015622 /* LoadView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EBF19D78EA1199203C088A60 /* LoadView.swift */; };
+		24A65A65E4C79C4DDDE4C8F8 /* FiringSolution.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAC09BCED7B2AD5F0EE9D03A /* FiringSolution.swift */; };
+		2667C16DC6C260A5BC44F560 /* WeatherProviding.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2B795ABB3F9386E27FB5001F /* WeatherProviding.swift */; };
+		2B44864E4C546ABC350982AC /* AtmosphereModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 838420DBEED3727BC220E2DD /* AtmosphereModel.swift */; };
+		2F6E8641CC7FA1D7B0B80749 /* BallisticAdvising.swift in Sources */ = {isa = PBXBuildFile; fileRef = E72A0E48CB97DDCA4F461CCC /* BallisticAdvising.swift */; };
+		368A12160BD347F5E7D5C7C8 /* Atmosphere.swift in Sources */ = {isa = PBXBuildFile; fileRef = 30BD682E722831B4262310CC /* Atmosphere.swift */; };
+		454263CAAD44B87533F29188 /* CalculatorStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = B9DA3788D53779DE29F050B2 /* CalculatorStore.swift */; };
+		5AAAACAD9F3C59E2C01C9C51 /* DragTable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52F97435269C77F4C6BA9BA5 /* DragTable.swift */; };
+		6A7AEC871CE4F357352077C5 /* SensorService.swift in Sources */ = {isa = PBXBuildFile; fileRef = A406651435D6D2B0F8C7CDB8 /* SensorService.swift */; };
+		81000A3A44AE7FDD1566255C /* BalizticZeroApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 711CB55F964505D8DD830933 /* BalizticZeroApp.swift */; };
+		85F2F0A6919579DA225CBC54 /* ShotContext.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0D972113C31957B9B1A295E6 /* ShotContext.swift */; };
+		88C33AA50A1FB7DC11761156 /* ShotView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C989F40E4246DBDEDABEE0B /* ShotView.swift */; };
+		B807DB3305AF634CAEC0E33C /* SpinDrift.swift in Sources */ = {isa = PBXBuildFile; fileRef = E27590133B8422FB48B8CA6A /* SpinDrift.swift */; };
+		C176FE829AC969249E78037A /* DisplayFormat.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3E7DC1712B2F24CEE7126F72 /* DisplayFormat.swift */; };
+		C87CD225F611EC37611CB30D /* TrajectorySolver.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE4D32847AA4EE1858D4A8E9 /* TrajectorySolver.swift */; };
+		DA9D2623BD8BA05E8479348B /* Wind.swift in Sources */ = {isa = PBXBuildFile; fileRef = 24E6B8CBCD63F776E531C4BA /* Wind.swift */; };
+		F7A6738F23DC73F256A18DA0 /* LoadProfile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FF5CB032DE8D2288CF91869 /* LoadProfile.swift */; };
+		FFB58D03BDCDF6ADC3EBC6C0 /* EnvironmentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 38BB82C8153F61C9BB607BD5 /* EnvironmentView.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		8803579D70327A9D0934D08D /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 0F5BF6CB6BE139EE68AC5D4B /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 966886C710E56F95CA8BDC28;
+			remoteInfo = BalizticZero;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		0D972113C31957B9B1A295E6 /* ShotContext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShotContext.swift; sourceTree = "<group>"; };
+		24E6B8CBCD63F776E531C4BA /* Wind.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Wind.swift; sourceTree = "<group>"; };
+		2B795ABB3F9386E27FB5001F /* WeatherProviding.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeatherProviding.swift; sourceTree = "<group>"; };
+		30BD682E722831B4262310CC /* Atmosphere.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Atmosphere.swift; sourceTree = "<group>"; };
+		38BB82C8153F61C9BB607BD5 /* EnvironmentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EnvironmentView.swift; sourceTree = "<group>"; };
+		3C989F40E4246DBDEDABEE0B /* ShotView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShotView.swift; sourceTree = "<group>"; };
+		3E7DC1712B2F24CEE7126F72 /* DisplayFormat.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DisplayFormat.swift; sourceTree = "<group>"; };
+		40845D62BB00974842BFB3C0 /* TrajectorySolverTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrajectorySolverTests.swift; sourceTree = "<group>"; };
+		4FF5CB032DE8D2288CF91869 /* LoadProfile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoadProfile.swift; sourceTree = "<group>"; };
+		52F97435269C77F4C6BA9BA5 /* DragTable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DragTable.swift; sourceTree = "<group>"; };
+		711CB55F964505D8DD830933 /* BalizticZeroApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BalizticZeroApp.swift; sourceTree = "<group>"; };
+		838420DBEED3727BC220E2DD /* AtmosphereModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AtmosphereModel.swift; sourceTree = "<group>"; };
+		883E6DA401A9808917069BD6 /* ElevationProviding.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ElevationProviding.swift; sourceTree = "<group>"; };
+		9D71F99B4DF7A73D08045CBF /* Coriolis.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Coriolis.swift; sourceTree = "<group>"; };
+		A406651435D6D2B0F8C7CDB8 /* SensorService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SensorService.swift; sourceTree = "<group>"; };
+		A8B80EFDE28D9B3E1EB6692F /* BalizticZeroTests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = BalizticZeroTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		AAC09BCED7B2AD5F0EE9D03A /* FiringSolution.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FiringSolution.swift; sourceTree = "<group>"; };
+		ABA04EDA1F1543069DEDEDC5 /* BalizticZero.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = BalizticZero.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		B9DA3788D53779DE29F050B2 /* CalculatorStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalculatorStore.swift; sourceTree = "<group>"; };
+		D69FCD257CA18DB114D3771C /* SolutionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SolutionView.swift; sourceTree = "<group>"; };
+		D7C3202124FDF4AA471749B8 /* RootView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RootView.swift; sourceTree = "<group>"; };
+		E27590133B8422FB48B8CA6A /* SpinDrift.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpinDrift.swift; sourceTree = "<group>"; };
+		E72A0E48CB97DDCA4F461CCC /* BallisticAdvising.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BallisticAdvising.swift; sourceTree = "<group>"; };
+		EBF19D78EA1199203C088A60 /* LoadView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoadView.swift; sourceTree = "<group>"; };
+		EE4D32847AA4EE1858D4A8E9 /* TrajectorySolver.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrajectorySolver.swift; sourceTree = "<group>"; };
+		FA0F2DDA56C0B1BD5EA44FEF /* TrajectoryTableView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrajectoryTableView.swift; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXGroup section */
+		161B253C534E0A051AE70F79 /* AI */ = {
+			isa = PBXGroup;
+			children = (
+				E72A0E48CB97DDCA4F461CCC /* BallisticAdvising.swift */,
+			);
+			path = AI;
+			sourceTree = "<group>";
+		};
+		240467C668C34F9725A53EB5 = {
+			isa = PBXGroup;
+			children = (
+				F751976ACC57604C1DA0ACA0 /* BalizticZero */,
+				AEFCCE9D60EBAB8D95D19FD0 /* BalizticZeroTests */,
+				B305E3C1A0107EAC02100E2F /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		420FCED23EED5B7FBCDEA886 /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				30BD682E722831B4262310CC /* Atmosphere.swift */,
+				AAC09BCED7B2AD5F0EE9D03A /* FiringSolution.swift */,
+				4FF5CB032DE8D2288CF91869 /* LoadProfile.swift */,
+				0D972113C31957B9B1A295E6 /* ShotContext.swift */,
+				24E6B8CBCD63F776E531C4BA /* Wind.swift */,
+			);
+			path = Models;
+			sourceTree = "<group>";
+		};
+		47AAB401EF3DDAED8EB07F23 /* Sensors */ = {
+			isa = PBXGroup;
+			children = (
+				A406651435D6D2B0F8C7CDB8 /* SensorService.swift */,
+			);
+			path = Sensors;
+			sourceTree = "<group>";
+		};
+		48A997DD530E75895F35E84B /* App */ = {
+			isa = PBXGroup;
+			children = (
+				B9DA3788D53779DE29F050B2 /* CalculatorStore.swift */,
+			);
+			path = App;
+			sourceTree = "<group>";
+		};
+		AEFCCE9D60EBAB8D95D19FD0 /* BalizticZeroTests */ = {
+			isa = PBXGroup;
+			children = (
+				40845D62BB00974842BFB3C0 /* TrajectorySolverTests.swift */,
+			);
+			path = BalizticZeroTests;
+			sourceTree = "<group>";
+		};
+		B305E3C1A0107EAC02100E2F /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				ABA04EDA1F1543069DEDEDC5 /* BalizticZero.app */,
+				A8B80EFDE28D9B3E1EB6692F /* BalizticZeroTests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		C7C254CBE6A59CFE0027CF68 /* Features */ = {
+			isa = PBXGroup;
+			children = (
+				3E7DC1712B2F24CEE7126F72 /* DisplayFormat.swift */,
+				38BB82C8153F61C9BB607BD5 /* EnvironmentView.swift */,
+				EBF19D78EA1199203C088A60 /* LoadView.swift */,
+				D7C3202124FDF4AA471749B8 /* RootView.swift */,
+				3C989F40E4246DBDEDABEE0B /* ShotView.swift */,
+				D69FCD257CA18DB114D3771C /* SolutionView.swift */,
+				FA0F2DDA56C0B1BD5EA44FEF /* TrajectoryTableView.swift */,
+			);
+			path = Features;
+			sourceTree = "<group>";
+		};
+		D3F79259B06A0A965D76DC3C /* Services */ = {
+			isa = PBXGroup;
+			children = (
+				883E6DA401A9808917069BD6 /* ElevationProviding.swift */,
+				2B795ABB3F9386E27FB5001F /* WeatherProviding.swift */,
+			);
+			path = Services;
+			sourceTree = "<group>";
+		};
+		F751976ACC57604C1DA0ACA0 /* BalizticZero */ = {
+			isa = PBXGroup;
+			children = (
+				161B253C534E0A051AE70F79 /* AI */,
+				48A997DD530E75895F35E84B /* App */,
+				FAD20BA56EF134862621EF7C /* Engine */,
+				C7C254CBE6A59CFE0027CF68 /* Features */,
+				420FCED23EED5B7FBCDEA886 /* Models */,
+				47AAB401EF3DDAED8EB07F23 /* Sensors */,
+				D3F79259B06A0A965D76DC3C /* Services */,
+				711CB55F964505D8DD830933 /* BalizticZeroApp.swift */,
+			);
+			path = BalizticZero;
+			sourceTree = "<group>";
+		};
+		FAD20BA56EF134862621EF7C /* Engine */ = {
+			isa = PBXGroup;
+			children = (
+				838420DBEED3727BC220E2DD /* AtmosphereModel.swift */,
+				9D71F99B4DF7A73D08045CBF /* Coriolis.swift */,
+				52F97435269C77F4C6BA9BA5 /* DragTable.swift */,
+				E27590133B8422FB48B8CA6A /* SpinDrift.swift */,
+				EE4D32847AA4EE1858D4A8E9 /* TrajectorySolver.swift */,
+			);
+			path = Engine;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		21B5B6C897C509193F356719 /* BalizticZeroTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = A6AA9E3C22CC13DFB3FC3C79 /* Build configuration list for PBXNativeTarget "BalizticZeroTests" */;
+			buildPhases = (
+				5D29166317008706E2C2891D /* Sources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				05F2D6CA6F31FE0B9FB95F28 /* PBXTargetDependency */,
+			);
+			name = BalizticZeroTests;
+			packageProductDependencies = (
+			);
+			productName = BalizticZeroTests;
+			productReference = A8B80EFDE28D9B3E1EB6692F /* BalizticZeroTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+		966886C710E56F95CA8BDC28 /* BalizticZero */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 48C48C574D4AC167F23ADAD2 /* Build configuration list for PBXNativeTarget "BalizticZero" */;
+			buildPhases = (
+				6E86475C6FC43E5155D055FA /* Sources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = BalizticZero;
+			packageProductDependencies = (
+			);
+			productName = BalizticZero;
+			productReference = ABA04EDA1F1543069DEDEDC5 /* BalizticZero.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		0F5BF6CB6BE139EE68AC5D4B /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = YES;
+				LastUpgradeCheck = 1430;
+				TargetAttributes = {
+				};
+			};
+			buildConfigurationList = 51801D1379433E2C0B57A132 /* Build configuration list for PBXProject "BalizticZero" */;
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				Base,
+				en,
+			);
+			mainGroup = 240467C668C34F9725A53EB5;
+			minimizedProjectReferenceProxies = 1;
+			preferredProjectObjectVersion = 77;
+			productRefGroup = B305E3C1A0107EAC02100E2F /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				966886C710E56F95CA8BDC28 /* BalizticZero */,
+				21B5B6C897C509193F356719 /* BalizticZeroTests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXSourcesBuildPhase section */
+		5D29166317008706E2C2891D /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				002B9DE3588B72A950411CDB /* TrajectorySolverTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		6E86475C6FC43E5155D055FA /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				368A12160BD347F5E7D5C7C8 /* Atmosphere.swift in Sources */,
+				2B44864E4C546ABC350982AC /* AtmosphereModel.swift in Sources */,
+				81000A3A44AE7FDD1566255C /* BalizticZeroApp.swift in Sources */,
+				2F6E8641CC7FA1D7B0B80749 /* BallisticAdvising.swift in Sources */,
+				454263CAAD44B87533F29188 /* CalculatorStore.swift in Sources */,
+				1BDB40593F9B19B8090665E6 /* Coriolis.swift in Sources */,
+				C176FE829AC969249E78037A /* DisplayFormat.swift in Sources */,
+				5AAAACAD9F3C59E2C01C9C51 /* DragTable.swift in Sources */,
+				104F94A43DB5F10D47B91FA2 /* ElevationProviding.swift in Sources */,
+				FFB58D03BDCDF6ADC3EBC6C0 /* EnvironmentView.swift in Sources */,
+				24A65A65E4C79C4DDDE4C8F8 /* FiringSolution.swift in Sources */,
+				F7A6738F23DC73F256A18DA0 /* LoadProfile.swift in Sources */,
+				216AE4385F74A5A40D015622 /* LoadView.swift in Sources */,
+				193FB80DDDF8879054CF6DFF /* RootView.swift in Sources */,
+				6A7AEC871CE4F357352077C5 /* SensorService.swift in Sources */,
+				85F2F0A6919579DA225CBC54 /* ShotContext.swift in Sources */,
+				88C33AA50A1FB7DC11761156 /* ShotView.swift in Sources */,
+				203538512D2AF03AA22DED3C /* SolutionView.swift in Sources */,
+				B807DB3305AF634CAEC0E33C /* SpinDrift.swift in Sources */,
+				C87CD225F611EC37611CB30D /* TrajectorySolver.swift in Sources */,
+				0A845F75053D717EF07FDF70 /* TrajectoryTableView.swift in Sources */,
+				2667C16DC6C260A5BC44F560 /* WeatherProviding.swift in Sources */,
+				DA9D2623BD8BA05E8479348B /* Wind.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		05F2D6CA6F31FE0B9FB95F28 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 966886C710E56F95CA8BDC28 /* BalizticZero */;
+			targetProxy = 8803579D70327A9D0934D08D /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		0242CF544C3A1FEE6BDABF9B /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				GENERATE_INFOPLIST_FILE = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.balizticzero.tests;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/BalizticZero.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/BalizticZero";
+			};
+			name = Debug;
+		};
+		1C5A678E7CAA694CE01BF86C /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = BalizticZero/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = "Baliztic Zero";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.balizticzero.app;
+				PRODUCT_NAME = BalizticZero;
+				SDKROOT = iphoneos;
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
+				TARGETED_DEVICE_FAMILY = 1;
+			};
+			name = Debug;
+		};
+		3A172A59A1107F8B825FD7FD /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGNING_ALLOWED = NO;
+				CODE_SIGNING_REQUIRED = NO;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"$(inherited)",
+					"DEBUG=1",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_STRICT_CONCURRENCY = minimal;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Debug;
+		};
+		6AF73F628D1F9EDD16959B17 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				GENERATE_INFOPLIST_FILE = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.balizticzero.tests;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/BalizticZero.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/BalizticZero";
+			};
+			name = Release;
+		};
+		E3A9BA403C024BA5B73827EC /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = BalizticZero/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = "Baliztic Zero";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.balizticzero.app;
+				PRODUCT_NAME = BalizticZero;
+				SDKROOT = iphoneos;
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
+				TARGETED_DEVICE_FAMILY = 1;
+			};
+			name = Release;
+		};
+		F2A338E974F0DA9F81B76A66 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGNING_ALLOWED = NO;
+				CODE_SIGNING_REQUIRED = NO;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				SWIFT_STRICT_CONCURRENCY = minimal;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		48C48C574D4AC167F23ADAD2 /* Build configuration list for PBXNativeTarget "BalizticZero" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				1C5A678E7CAA694CE01BF86C /* Debug */,
+				E3A9BA403C024BA5B73827EC /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		51801D1379433E2C0B57A132 /* Build configuration list for PBXProject "BalizticZero" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				3A172A59A1107F8B825FD7FD /* Debug */,
+				F2A338E974F0DA9F81B76A66 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		A6AA9E3C22CC13DFB3FC3C79 /* Build configuration list for PBXNativeTarget "BalizticZeroTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				0242CF544C3A1FEE6BDABF9B /* Debug */,
+				6AF73F628D1F9EDD16959B17 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 0F5BF6CB6BE139EE68AC5D4B /* Project object */;
+}
