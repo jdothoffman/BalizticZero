@@ -42,6 +42,14 @@ struct BallisticLoad: Equatable {
     var twistInches: Double
     var clickUnit: ClickUnit
     var clickValue: Double
+    var travelPerTurnMOA: Double = 25
+    var elevationTravelMOA: Double = 100
+    var windageTravelMOA: Double = 80
+    var railCantMOA: Double = 0
+    var reticleUnit: ClickUnit = .moa
+    var focalPlane: FocalPlane = .ffp
+    var reticleTrueMagnification: Double = 25
+    var hashSpacingMIL: Double = AngularScale.oneMOAInMil
 }
 
 @Model
@@ -59,6 +67,14 @@ final class LoadProfile {
     var twistInches: Double
     var clickUnitRaw: String
     var clickValue: Double
+    var travelPerTurnMOA: Double = 25
+    var elevationTravelMOA: Double = 100
+    var windageTravelMOA: Double = 80
+    var railCantMOA: Double = 0
+    var reticleUnitRaw: String = ClickUnit.moa.rawValue
+    var focalPlaneRaw: String = FocalPlane.ffp.rawValue
+    var reticleTrueMagnification: Double = 25
+    var hashSpacingMIL: Double = AngularScale.oneMOAInMil
     var createdAt: Date
 
     init(
@@ -75,6 +91,14 @@ final class LoadProfile {
         twistInches: Double,
         clickUnit: ClickUnit,
         clickValue: Double,
+        travelPerTurnMOA: Double = 25,
+        elevationTravelMOA: Double = 100,
+        windageTravelMOA: Double = 80,
+        railCantMOA: Double = 0,
+        reticleUnit: ClickUnit = .moa,
+        focalPlane: FocalPlane = .ffp,
+        reticleTrueMagnification: Double = 25,
+        hashSpacingMIL: Double = AngularScale.oneMOAInMil,
         createdAt: Date = Date()
     ) {
         self.id = id
@@ -90,6 +114,14 @@ final class LoadProfile {
         self.twistInches = twistInches
         self.clickUnitRaw = clickUnit.rawValue
         self.clickValue = clickValue
+        self.travelPerTurnMOA = travelPerTurnMOA
+        self.elevationTravelMOA = elevationTravelMOA
+        self.windageTravelMOA = windageTravelMOA
+        self.railCantMOA = railCantMOA
+        self.reticleUnitRaw = reticleUnit.rawValue
+        self.focalPlaneRaw = focalPlane.rawValue
+        self.reticleTrueMagnification = reticleTrueMagnification
+        self.hashSpacingMIL = hashSpacingMIL
         self.createdAt = createdAt
     }
 
@@ -101,6 +133,16 @@ final class LoadProfile {
     var clickUnit: ClickUnit {
         get { ClickUnit(rawValue: clickUnitRaw) ?? .moa }
         set { clickUnitRaw = newValue.rawValue }
+    }
+
+    var reticleUnit: ClickUnit {
+        get { ClickUnit(rawValue: reticleUnitRaw) ?? .moa }
+        set { reticleUnitRaw = newValue.rawValue }
+    }
+
+    var focalPlane: FocalPlane {
+        get { FocalPlane(rawValue: focalPlaneRaw) ?? .ffp }
+        set { focalPlaneRaw = newValue.rawValue }
     }
 
     var ballisticLoad: BallisticLoad {
@@ -115,7 +157,15 @@ final class LoadProfile {
             zeroRangeYards: zeroRangeYards,
             twistInches: twistInches,
             clickUnit: clickUnit,
-            clickValue: clickValue
+            clickValue: clickValue,
+            travelPerTurnMOA: travelPerTurnMOA,
+            elevationTravelMOA: elevationTravelMOA,
+            windageTravelMOA: windageTravelMOA,
+            railCantMOA: railCantMOA,
+            reticleUnit: reticleUnit,
+            focalPlane: focalPlane,
+            reticleTrueMagnification: reticleTrueMagnification,
+            hashSpacingMIL: hashSpacingMIL
         )
     }
 

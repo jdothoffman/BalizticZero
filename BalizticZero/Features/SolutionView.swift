@@ -5,98 +5,210 @@ struct SolutionView: View {
 
     var body: some View {
         ScrollView {
-            VStack(alignment: .leading, spacing: 20) {
+            VStack(alignment: .leading, spacing: 24) {
                 if let solution = store.solution {
-                    Text(DisplayFormat.distance(solution.target.rangeYards, metric: store.useMetric))
-                        .font(.headline)
-                        .foregroundStyle(.secondary)
-                    correctionBlock(
-                        title: verticalWord(solution.target.comeUpMOA),
-                        moa: solution.target.comeUpMOA,
-                        mil: solution.target.comeUpMIL,
-                        clicks: solution.target.elevationClicks,
-                        direction: solution.target.comeUpMOA >= 0 ? "up" : "down"
-                    )
-                    correctionBlock(
-                        title: solution.target.windageMOA >= 0 ? "RIGHT" : "LEFT",
-                        moa: solution.target.windageMOA,
-                        mil: solution.target.windageMIL,
-                        clicks: solution.target.windageClicks,
-                        direction: solution.target.windageMOA >= 0 ? "right" : "left"
-                    )
-                    flightFacts(solution.target)
-                    breakdown(solution)
+                    header(solution)
+                    Panel {
+                        correction(
+                            label: "Elevation",
+                            direction: solution.target.comeUpMOA >= 0 ? "UP" : "DOWN",
+                            moa: solution.target.comeUpMOA,
+                            mil: solution.target.comeUpMIL
+                        )
+                        Rectangle()
+                            .fill(Theme.hairline)
+                            .frame(height: 1)
+                        correction(
+                            label: "Windage",
+                            direction: solution.target.windageMOA >= 0 ? "RIGHT" : "LEFT",
+                            moa: solution.target.windageMOA,
+                            mil: solution.target.windageMIL
+                        )
+                    }
+                    if let profile = store.selectedProfile {
+                        DataPanel(title: "On the reticle", rows: reticleRows(solution, profile: profile))
+                    }
+                    DataPanel(title: "At target", rows: flightFacts(solution.target))
+                    DataPanel(title: "What moved the impact", rows: breakdown(solution))
                 } else {
                     ContentUnavailableView(
                         "No solution",
                         systemImage: "target",
                         description: Text(store.statusMessage ?? "Check the load and the range.")
                     )
+                    .padding(.top, 60)
                 }
 
-                Button("Ask AI") {
-                    Task { _ = await store.advisor.explain(solution: store.solution ?? emptySolution) }
+                if store.advisor.isAvailable {
+                    Button("Ask AI") {
+                        Task { _ = await store.advisor.explain(solution: store.solution ?? emptySolution) }
+                    }
                 }
-                .disabled(!store.advisor.isAvailable)
-                Text("Not available yet. The advisor seam is ready for a later model.")
-                    .font(.footnote)
-                    .foregroundStyle(.secondary)
 
                 Text("Estimate only. Confirm with live fire.")
                     .font(.footnote)
                     .foregroundStyle(.secondary)
+                    .frame(maxWidth: .infinity, alignment: .center)
             }
             .frame(maxWidth: .infinity, alignment: .leading)
-            .padding()
+            .padding(16)
         }
+        .background(Theme.background)
         .navigationTitle("Solution")
     }
 
-    private func correctionBlock(title: String, moa: Double, mil: Double, clicks: Double, direction: String) -> some View {
-        VStack(alignment: .leading, spacing: 4) {
-            Text(title)
-                .font(.caption.weight(.semibold))
-                .foregroundStyle(.secondary)
-            Text(String(format: "%.2f MOA", abs(moa)))
-                .font(.system(size: 40, weight: .semibold, design: .rounded))
-            Text(String(format: "%.2f MIL  ·  %.1f clicks %@", abs(mil), abs(clicks), direction))
-                .font(.title3)
-                .foregroundStyle(.secondary)
-        }
+    /// The scope's own unit leads, so the big number is the one you dial.
+    private var leadUnit: ClickUnit {
+        store.selectedProfile?.clickUnit ?? .moa
     }
 
-    private func flightFacts(_ row: TrajectoryRow) -> some View {
-        VStack(alignment: .leading, spacing: 6) {
-            labeled("Path", DisplayFormat.drop(row.pathInches, metric: store.useMetric))
-            labeled("Windage", DisplayFormat.drop(row.windageInches, metric: store.useMetric))
-            labeled("Time", String(format: "%.3f s", row.timeSeconds))
-            labeled("Velocity", DisplayFormat.speed(row.velocityFps, metric: store.useMetric))
-            labeled("Energy", DisplayFormat.energy(row.energyFootPounds, metric: store.useMetric))
-        }
-        .padding(.top, 4)
-    }
-
-    private func breakdown(_ solution: FiringSolution) -> some View {
-        VStack(alignment: .leading, spacing: 6) {
-            Text("What moved the impact")
-                .font(.headline)
-                .padding(.top, 8)
-            labeled("Wind drift", lateral(solution.aerodynamicWindageInches))
-            labeled("Spin drift", lateral(solution.spinDriftInches))
-            labeled("Coriolis, horizontal", lateral(solution.coriolisHorizontalInches))
-            labeled("Coriolis, vertical", vertical(solution.coriolisVerticalInches))
-            labeled("Zero angle", String(format: "%.2f MOA", solution.zeroAngleMOA))
-        }
-    }
-
-    private func labeled(_ title: String, _ value: String) -> some View {
-        HStack {
-            Text(title)
+    private func header(_ solution: FiringSolution) -> some View {
+        HStack(alignment: .firstTextBaseline) {
+            VStack(alignment: .leading, spacing: 2) {
+                SectionLabel("Target")
+                Text(DisplayFormat.distance(solution.target.rangeYards, metric: store.useMetric))
+                    .font(.title2.weight(.semibold).monospacedDigit())
+            }
             Spacer()
-            Text(value)
-                .monospacedDigit()
-                .foregroundStyle(.secondary)
+            if let profile = store.selectedProfile {
+                VStack(alignment: .trailing, spacing: 2) {
+                    SectionLabel("Load")
+                    Text(profile.name)
+                        .font(.subheadline.weight(.medium))
+                        .lineLimit(1)
+                }
+            }
         }
+        .padding(.horizontal, 4)
+    }
+
+    private func correction(label: String, direction: String, moa: Double, mil: Double) -> some View {
+        let lead = leadUnit == .mil ? mil : moa
+        let other = leadUnit == .mil
+            ? String(format: "%.2f MOA", abs(moa))
+            : String(format: "%.2f MIL", abs(mil))
+
+        return VStack(alignment: .leading, spacing: 6) {
+            HStack {
+                SectionLabel(label)
+                Spacer()
+                Text(direction)
+                    .font(.caption.weight(.bold))
+                    .tracking(1.4)
+                    .foregroundStyle(Theme.accent)
+            }
+            HStack(alignment: .firstTextBaseline, spacing: 8) {
+                Text(String(format: "%.2f", abs(lead)))
+                    .font(.system(size: 60, weight: .semibold).monospacedDigit())
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.6)
+                Text(leadUnit.title)
+                    .font(.headline)
+                    .foregroundStyle(.secondary)
+            }
+            Text("\(other)  ·  \(dialLine(moa: moa))")
+                .font(.subheadline.monospacedDigit())
+                .foregroundStyle(.secondary)
+            if let warning = travelWarning(moa: moa, label: label) {
+                Text(warning)
+                    .font(.subheadline.weight(.medium))
+                    .foregroundStyle(Theme.accent)
+            }
+        }
+        .padding(16)
+    }
+
+    private func dialLine(moa: Double) -> String {
+        guard let profile = store.selectedProfile else { return "—" }
+        let dial = ScopeDial.instruction(
+            angleMOA: moa,
+            clickUnit: profile.clickUnit,
+            clickValue: profile.clickValue,
+            travelPerTurnMOA: profile.travelPerTurnMOA
+        )
+        return dial.summary
+    }
+
+    private func travelWarning(moa: Double, label: String) -> String? {
+        guard let profile = store.selectedProfile, let solution = store.solution else { return nil }
+        let limit: TravelLimit?
+        let noun: String
+        if label == "Elevation" {
+            limit = ScopeDial.elevationLimit(
+                comeUpMOA: moa,
+                zeroAngleMOA: solution.zeroAngleMOA,
+                elevationTravelMOA: profile.elevationTravelMOA,
+                railCantMOA: profile.railCantMOA,
+                clickUnit: profile.clickUnit
+            )
+            noun = "elevation"
+        } else {
+            limit = ScopeDial.windageLimit(
+                windageMOA: moa,
+                windageTravelMOA: profile.windageTravelMOA,
+                clickUnit: profile.clickUnit
+            )
+            noun = "windage"
+        }
+        guard let limit, limit.isOver else { return nil }
+        return String(format: "Past %@ travel by %.1f %@", noun, limit.overBy, profile.clickUnit.title)
+    }
+
+    private func reticleRows(_ solution: FiringSolution, profile: LoadProfile) -> [(label: String, value: String)] {
+        let load = profile.ballisticLoad
+        let elevation = ScopeDial.indicatedHold(
+            angleMOA: solution.target.comeUpMOA,
+            reticleUnit: load.reticleUnit,
+            focalPlane: load.focalPlane,
+            trueMagnification: load.reticleTrueMagnification,
+            currentMagnification: store.magnification
+        )
+        let windage = ScopeDial.indicatedHold(
+            angleMOA: solution.target.windageMOA,
+            reticleUnit: load.reticleUnit,
+            focalPlane: load.focalPlane,
+            trueMagnification: load.reticleTrueMagnification,
+            currentMagnification: store.magnification
+        )
+        let unit = load.reticleUnit.title
+        let elevationWord = solution.target.comeUpMOA >= 0 ? "up" : "down"
+        let windageWord = solution.target.windageMOA >= 0 ? "right" : "left"
+        var rows = [
+            ("Elevation", String(format: "%.2f %@ %@", elevation, unit, elevationWord)),
+            ("Windage", String(format: "%.2f %@ %@", windage, unit, windageWord)),
+        ]
+        let spacing = ScopeDial.hashSpacing(storedMIL: load.hashSpacingMIL, unit: load.reticleUnit)
+        if let hashes = ScopeDial.hashCount(indicated: elevation, hashSpacing: spacing) {
+            rows.append(("Elevation hashes", String(format: "%.1f %@", hashes, elevationWord)))
+        }
+        if let hashes = ScopeDial.hashCount(indicated: windage, hashSpacing: spacing) {
+            rows.append(("Windage hashes", String(format: "%.1f %@", hashes, windageWord)))
+        }
+        if load.focalPlane == .sfp {
+            let trueElevation = abs(AngularScale.display(solution.target.comeUpMOA, unit: load.reticleUnit))
+            rows.append(("True elevation", String(format: "%.2f %@ at %g×", trueElevation, unit, load.reticleTrueMagnification)))
+        }
+        return rows
+    }
+
+    private func flightFacts(_ row: TrajectoryRow) -> [(label: String, value: String)] {
+        [
+            ("Path", DisplayFormat.drop(row.pathInches, metric: store.useMetric)),
+            ("Windage", DisplayFormat.drop(row.windageInches, metric: store.useMetric)),
+            ("Time of flight", String(format: "%.3f s", row.timeSeconds)),
+            ("Velocity", DisplayFormat.speed(row.velocityFps, metric: store.useMetric)),
+            ("Energy", DisplayFormat.energy(row.energyFootPounds, metric: store.useMetric)),
+        ]
+    }
+
+    private func breakdown(_ solution: FiringSolution) -> [(label: String, value: String)] {
+        [
+            ("Wind drift", lateral(solution.aerodynamicWindageInches)),
+            ("Spin drift", lateral(solution.spinDriftInches)),
+            ("Coriolis, horizontal", lateral(solution.coriolisHorizontalInches)),
+            ("Coriolis, vertical", vertical(solution.coriolisVerticalInches)),
+            ("Zero angle", String(format: "%.2f MOA", solution.zeroAngleMOA)),
+        ]
     }
 
     private func lateral(_ inches: Double) -> String {
@@ -109,10 +221,6 @@ struct SolutionView: View {
         let magnitude = DisplayFormat.drop(abs(inches), metric: store.useMetric)
         if abs(inches) < 0.05 { return magnitude }
         return inches > 0 ? "\(magnitude) up" : "\(magnitude) down"
-    }
-
-    private func verticalWord(_ moa: Double) -> String {
-        moa >= 0 ? "UP" : "DOWN"
     }
 
     private var emptySolution: FiringSolution {
