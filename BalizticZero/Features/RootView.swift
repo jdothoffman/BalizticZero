@@ -7,15 +7,21 @@ struct NumericField: View {
     var decimals: Int = 1
 
     var body: some View {
-        LabeledContent(title) {
-            HStack(spacing: 6) {
+        LabeledContent {
+            HStack(spacing: 8) {
                 TextField(title, value: $value, format: .number.precision(.fractionLength(0...decimals)))
                     .keyboardType(.decimalPad)
                     .multilineTextAlignment(.trailing)
+                    .monospacedDigit()
+                    .foregroundStyle(.primary)
                 Text(unit)
+                    .font(.footnote)
                     .foregroundStyle(.secondary)
                     .frame(minWidth: 36, alignment: .leading)
             }
+        } label: {
+            Text(title)
+                .foregroundStyle(.secondary)
         }
     }
 }
@@ -31,6 +37,8 @@ struct RootView: View {
                 MainTabView(store: store)
             } else {
                 ProgressView("Preparing calculator")
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                    .background(Theme.background)
             }
         }
         .task {
@@ -93,23 +101,33 @@ struct DisclaimerView: View {
     var acknowledge: () -> Void
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 20) {
+        VStack(alignment: .leading, spacing: 18) {
             Spacer()
+            Rectangle()
+                .fill(Theme.accent)
+                .frame(width: 32, height: 3)
             Text("Before you shoot")
-                .font(.largeTitle.bold())
+                .font(.largeTitle.weight(.bold))
             Text("Baliztic Zero is a point-mass ballistic estimate. Wind, muzzle velocity, and the bullet’s real drag all move the impact.")
-                .font(.body)
+                .foregroundStyle(.secondary)
             Text("Check every solution on a known range before you trust it past 500 yards. Do not aim at anything you cannot afford to miss.")
-                .font(.body)
+                .foregroundStyle(.secondary)
             Spacer()
             Button(action: acknowledge) {
                 Text("I understand")
+                    .font(.headline)
+                    .foregroundStyle(Theme.background)
                     .frame(maxWidth: .infinity)
+                    .padding(.vertical, 6)
             }
             .buttonStyle(.borderedProminent)
+            .tint(Theme.accent)
             .controlSize(.large)
         }
         .padding(24)
+        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .leading)
+        .background(Theme.background)
+        .preferredColorScheme(.dark)
         .interactiveDismissDisabled()
     }
 }

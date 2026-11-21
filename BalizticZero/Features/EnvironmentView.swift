@@ -12,6 +12,7 @@ struct EnvironmentView: View {
                 }
                 .pickerStyle(.segmented)
             }
+            .themedRows()
 
             Section {
                 NumericField(title: "Temperature", value: temperatureBinding, unit: store.useMetric ? "°C" : "°F", decimals: 1)
@@ -19,10 +20,11 @@ struct EnvironmentView: View {
                 NumericField(title: "Humidity", value: $store.humidityPercent, unit: "%", decimals: 0)
                 NumericField(title: "Altitude", value: altitudeBinding, unit: store.useMetric ? "m" : "ft", decimals: 0)
             } header: {
-                Text("Air")
+                SectionLabel("Air")
             } footer: {
                 Text("Density altitude \(DisplayFormat.altitude(store.solution?.densityAltitudeFeet ?? AtmosphereModel.densityAltitudeFeet(currentAtmosphere), metric: store.useMetric)). Density ratio \(String(format: "%.3f", store.solution?.densityRatio ?? AtmosphereModel.densityRatio(currentAtmosphere))). The phone has no thermometer or humidity sensor.")
             }
+            .themedRows()
 
             Section {
                 NumericField(title: "Latitude", value: latitudeBinding, unit: "°", decimals: 4)
@@ -38,10 +40,11 @@ struct EnvironmentView: View {
                     store.useStandardPressure()
                 }
             } header: {
-                Text("Location")
+                SectionLabel("Location")
             } footer: {
                 Text(store.sensors.statusMessage + " " + store.elevationProvider.sourceNote)
             }
+            .themedRows()
 
             Section {
                 Button("Update weather") {
@@ -51,8 +54,10 @@ struct EnvironmentView: View {
             } footer: {
                 Text(store.weatherProvider.sourceNote)
             }
+            .themedRows()
         }
-        .navigationTitle("Environment")
+        .themedForm()
+        .navigationTitle("Conditions")
         .scrollDismissesKeyboard(.interactively)
     }
 

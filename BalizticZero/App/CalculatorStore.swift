@@ -16,6 +16,8 @@ final class CalculatorStore {
     var temperatureF = Atmosphere.icaoSeaLevel.temperatureF
     var pressureInHg = Atmosphere.icaoSeaLevel.stationPressureInHg
     var humidityPercent = 0.0
+    /// Power the scope is set to. Used when the reticle is second focal plane.
+    var magnification = 25.0
     var pressureSource: PressureSource = .standardForAltitude
     var useMetric = UserDefaults.standard.bool(forKey: Keys.useMetric)
     var acceptingSensors = false
@@ -85,9 +87,18 @@ final class CalculatorStore {
             add(load.zeroRangeYards)
             add(load.twistInches)
             add(load.clickValue)
+            add(load.travelPerTurnMOA)
+            add(load.elevationTravelMOA)
+            add(load.windageTravelMOA)
+            add(load.railCantMOA)
+            add(load.reticleTrueMagnification)
+            add(load.hashSpacingMIL)
             parts.append(load.dragModel.rawValue)
             parts.append(load.clickUnit.rawValue)
+            parts.append(load.reticleUnit.rawValue)
+            parts.append(load.focalPlane.rawValue)
         }
+        add(magnification)
         parts.append(useMetric ? "metric" : "imperial")
         parts.append(selectedProfile?.id.uuidString ?? "")
         return parts.joined(separator: "|")
@@ -98,6 +109,8 @@ final class CalculatorStore {
         if rangeYards < 10 { rangeYards = 10 }
         if inclineDegrees > 65 { inclineDegrees = 65 }
         if inclineDegrees < -65 { inclineDegrees = -65 }
+        if magnification < 1 { magnification = 1 }
+        if magnification > 100 { magnification = 100 }
         guard let load = selectedProfile?.ballisticLoad else {
             solution = nil
             statusMessage = "Add a load profile to calculate a shot."

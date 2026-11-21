@@ -13,7 +13,7 @@ struct ShotView: View {
                     store.measureIncline()
                 }
             } header: {
-                Text("Target")
+                SectionLabel("Target")
             } footer: {
                 VStack(alignment: .leading, spacing: 6) {
                     if store.sensors.statusMessage.hasPrefix("Incline") || store.sensors.statusMessage.contains("cannot measure") {
@@ -22,17 +22,31 @@ struct ShotView: View {
                     Text("Point the top of the phone along the barrel, then measure. Positive incline is uphill. Zero is solved flat, in this air, with no wind.")
                 }
             }
+            .themedRows()
+
+            if store.selectedProfile?.focalPlane == .sfp {
+                Section {
+                    NumericField(title: "Magnification", value: $store.magnification, unit: "×", decimals: 1)
+                } header: {
+                    SectionLabel("Scope")
+                } footer: {
+                    Text("The power the scope is on. Second-focal-plane marks are true at \(String(format: "%g", store.selectedProfile?.reticleTrueMagnification ?? 25))×.")
+                }
+                .themedRows()
+            }
 
             Section {
                 NumericField(title: "Wind speed", value: windSpeedBinding, unit: store.useMetric ? "m/s" : "mph", decimals: 1)
                 NumericField(title: "Wind from", value: $store.windFromDegrees, unit: "°", decimals: 0)
                 NumericField(title: "Azimuth", value: azimuthBinding, unit: "° mag", decimals: 0)
             } header: {
-                Text("Wind")
+                SectionLabel("Wind")
             } footer: {
                 Text("\(windSummary) Azimuth is magnetic. Coriolis uses it directly until declination is added. Wind from is the compass direction the wind comes from: 0 is north, 90 is east.")
             }
+            .themedRows()
         }
+        .themedForm()
         .navigationTitle("Shot")
         .scrollDismissesKeyboard(.interactively)
     }
