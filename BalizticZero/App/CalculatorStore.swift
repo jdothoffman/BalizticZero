@@ -128,7 +128,7 @@ final class CalculatorStore {
         }
         guard load.clickValue > 0 else {
             solution = nil
-            statusMessage = "Enter a scope click value, such as 0.25 MOA or 0.1 MIL."
+            statusMessage = "Enter a scope click value, such as 0.25 MOA or 0.1 MRAD."
             return
         }
         let request = ShotRequest(

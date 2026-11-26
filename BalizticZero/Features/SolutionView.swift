@@ -86,7 +86,7 @@ struct SolutionView: View {
         let lead = leadUnit == .mil ? mil : moa
         let other = leadUnit == .mil
             ? String(format: "%.2f MOA", abs(moa))
-            : String(format: "%.2f MIL", abs(mil))
+            : String(format: "%.2f %@", abs(mil), ClickUnit.mil.title)
 
         return VStack(alignment: .leading, spacing: 6) {
             HStack {
@@ -207,7 +207,7 @@ struct SolutionView: View {
             ("Spin drift", lateral(solution.spinDriftInches)),
             ("Coriolis, horizontal", lateral(solution.coriolisHorizontalInches)),
             ("Coriolis, vertical", vertical(solution.coriolisVerticalInches)),
-            ("Zero angle", String(format: "%.2f MOA", solution.zeroAngleMOA)),
+            ("Zero angle", String(format: "%.2f %@", AngularScale.display(solution.zeroAngleMOA, unit: leadUnit), leadUnit.title)),
         ]
     }
 

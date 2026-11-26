@@ -13,7 +13,7 @@ The app has five tabs:
 | **Shot** | Range, zero, incline (can be measured with the phone), wind speed and direction, shot azimuth. |
 | **Conditions** | Temperature, station pressure, humidity, altitude, latitude/longitude. Imperial or metric. Can fill location, altitude, and pressure from the phone's GPS and barometer. |
 | **Load** | Saved load profiles: bullet (velocity, weight, diameter, length, BC, G1/G7), rifle (sight height, zero, twist), and scope (click value, turret travel, rail cant, reticle unit, focal plane, hash spacing). |
-| **Solution** | Correction at the target in the scope's unit, with clicks and turret turns. Reticle hold (including second-focal-plane scaling), travel-limit warnings, flight data, and a breakdown of wind drift, spin drift, and Coriolis. |
+| **Solution** | Correction at the target in the scope's unit (MOA or MRAD), with turret turns, the turret reading to dial, and clicks. Reticle hold (including second-focal-plane scaling), travel-limit warnings, flight data, and a breakdown of wind drift, spin drift, and Coriolis. |
 | **Table** | Elevation, windage, velocity, time of flight, and energy every 100 yards. |
 
 The solution recomputes whenever any input changes.

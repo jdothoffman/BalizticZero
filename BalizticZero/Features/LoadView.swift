@@ -184,7 +184,7 @@ struct LoadEditorView: View {
                 NumericField(title: "Windage travel", value: windageTravelBinding, unit: profile.clickUnit.title, decimals: 1)
                 NumericField(title: "Rail", value: railBinding, unit: "MOA", decimals: 0)
             } footer: {
-                Text("Travel follows the turret unit. Quarter-minute scopes are usually 0.25 MOA and 25 MOA per turn. A 20 MOA rail frees that much extra elevation above the zero.")
+                Text("Travel follows the turret unit. Quarter-minute scopes are usually 0.25 MOA and 25 MOA per turn; MRAD scopes are usually 0.1 MRAD and 10 MRAD per turn. Rails are sold in MOA for both. A 20 MOA rail frees that much extra elevation above the zero.")
             }
             .themedRows()
 
@@ -204,7 +204,7 @@ struct LoadEditorView: View {
                     NumericField(title: "Reticle true at", value: trueMagnificationBinding, unit: "×", decimals: 1)
                 }
             } footer: {
-                Text("The reticle can be MIL while the turret is MOA. First focal plane marks stay true at every power. Second focal plane marks are true only at the power you enter.")
+                Text("The reticle can be MRAD while the turret is MOA. First focal plane marks stay true at every power. Second focal plane marks are true only at the power you enter.")
             }
             .themedRows()
         }
@@ -314,11 +314,36 @@ struct LoadEditorView: View {
     }
 
     private var clickUnitBinding: Binding<ClickUnit> {
-        Binding(get: { profile.clickUnit }, set: { profile.clickUnit = $0; store.recompute() })
+        Binding(
+            get: { profile.clickUnit },
+            set: { unit in
+                let settings = ScopeDial.turretSettings(
+                    changingFrom: profile.clickUnit,
+                    to: unit,
+                    clickValue: profile.clickValue,
+                    travelPerTurnMOA: profile.travelPerTurnMOA
+                )
+                profile.clickUnit = unit
+                profile.clickValue = settings.clickValue
+                profile.travelPerTurnMOA = settings.travelPerTurnMOA
+                store.recompute()
+            }
+        )
     }
 
     private var reticleUnitBinding: Binding<ClickUnit> {
-        Binding(get: { profile.reticleUnit }, set: { profile.reticleUnit = $0; store.recompute() })
+        Binding(
+            get: { profile.reticleUnit },
+            set: { unit in
+                profile.hashSpacingMIL = ScopeDial.hashSpacingMIL(
+                    changingFrom: profile.reticleUnit,
+                    to: unit,
+                    storedMIL: profile.hashSpacingMIL
+                )
+                profile.reticleUnit = unit
+                store.recompute()
+            }
+        )
     }
 
     private var focalPlaneBinding: Binding<FocalPlane> {

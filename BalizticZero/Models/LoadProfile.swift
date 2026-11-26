@@ -24,7 +24,31 @@ enum ClickUnit: String, Codable, CaseIterable, Identifiable {
     var title: String {
         switch self {
         case .moa: "MOA"
-        case .mil: "MIL"
+        case .mil: "MRAD"
+        }
+    }
+
+    /// Click size most turrets in this unit use, in this unit.
+    var standardClickValue: Double {
+        switch self {
+        case .moa: 0.25
+        case .mil: 0.1
+        }
+    }
+
+    /// Travel in one turret revolution most scopes in this unit use, in this unit.
+    var standardTravelPerTurn: Double {
+        switch self {
+        case .moa: 25
+        case .mil: 10
+        }
+    }
+
+    /// Spacing between the finest reticle hashes most reticles in this unit use, in this unit.
+    var standardHashSpacing: Double {
+        switch self {
+        case .moa: 1
+        case .mil: 0.2
         }
     }
 }
