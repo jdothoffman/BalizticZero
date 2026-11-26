@@ -73,7 +73,7 @@ The tests check the solver against a vacuum analytic drop, published G1/G7 check
 
 ## Design
 
-The UI is dark-only with a single amber accent, tabular numbers, and no decoration. Colors and shared components (`SectionLabel`, `Panel`, `DataPanel`) live in `Features/Theme.swift`. Screens use those rather than defining their own styling.
+The UI is black with a single rose gold accent, tabular numbers, and no decoration. Colors and shared components (`SectionLabel`, `Panel`, `DataPanel`) live in `Features/Theme.swift`. Screens use those rather than defining their own styling.
 
 ## Not done yet
 
