@@ -21,7 +21,6 @@ final class CalculatorStore {
     var pressureSource: PressureSource = .standardForAltitude
     var useMetric = UserDefaults.standard.bool(forKey: Keys.useMetric)
     var acceptingSensors = false
-    var sensorMessage = "Sensors are idle. Values stay editable either way."
     var statusMessage: String?
     var solution: FiringSolution?
 
@@ -231,18 +230,18 @@ final class CalculatorStore {
         let token = sensorToken
         acceptingSensors = true
         sensors.startLocationAndPressure()
-        sensorMessage = sensors.statusMessage
         Task { @MainActor in
             try? await Task.sleep(for: .seconds(20))
             guard token == self.sensorToken, self.acceptingSensors else { return }
-            self.stopSensors(message: "Sensor reading finished. Edit any value that needs it.")
+            self.stopSensors(message: self.sensors.receivedLocation
+                ? "Sensor reading finished. Edit any value that needs it."
+                : "No location fix in 20 seconds. Try again with a clear view of the sky, or enter latitude and longitude yourself.")
         }
     }
 
     func stopSensors(message: String? = nil) {
         acceptingSensors = false
-        sensors.stopLocationAndPressure()
-        sensorMessage = message ?? "Sensor updates stopped. Fields stay as they are."
+        sensors.stopLocationAndPressure(message: message ?? "Sensor updates stopped. Fields stay as they are.")
     }
 
     func holdManualSensorInput() {
@@ -253,7 +252,6 @@ final class CalculatorStore {
 
     func measureIncline() {
         sensors.measureIncline()
-        sensorMessage = sensors.statusMessage
     }
 
     func refreshWeather() async {
@@ -300,7 +298,6 @@ final class CalculatorStore {
         if let incline = reading.inclineDegrees {
             inclineDegrees = min(65, max(-65, incline))
         }
-        sensorMessage = sensors.statusMessage
         recompute()
     }
 
