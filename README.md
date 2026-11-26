@@ -69,6 +69,8 @@ xcodebuild -project BalizticZero.xcodeproj -scheme BalizticZero \
   -derivedDataPath build test
 ```
 
+Every pull request to `main` runs these tests on a GitHub macOS runner (`.github/workflows/tests.yml`), and the "Unit tests" check must pass before it can merge.
+
 The tests check the solver against a vacuum analytic drop, published G1/G7 checkpoints, and a reference zero angle. They also check that the wind, incline, temperature, spin-drift, and Coriolis effects push in the right direction, and check the scope dial and reticle-hold math.
 
 ## Design
