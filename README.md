@@ -41,7 +41,7 @@ BalizticZero/
   Features/       SwiftUI screens, shared theme, display formatting
   Sensors/        CoreLocation and CoreMotion: GPS, barometer, heading, incline
   Services/       Weather (Apple WeatherKit) and elevation (not yet connected) providers
-  AI/             Advisor protocol placeholder (not yet connected)
+  AI/             Advisor client, the shot review model, and the Keychain token store
 BalizticZeroTests/  Solver, scope-dial, and weather unit tests
 project.yml         XcodeGen spec; the .xcodeproj is generated from it
 api/                Go advisor API: takes a solved shot, asks Claude to explain it
@@ -78,7 +78,11 @@ The tests check the solver against a vacuum analytic drop, published G1/G7 check
 
 ## Advisor API
 
-`api/` is a small Go service the app will call to have Claude explain a solved shot in plain language. The phone sends the numbers it already solved; the server builds the prompt and holds the Anthropic API key, so the key never ships in the app. It uses the official Anthropic Go SDK.
+`api/` is a small Go service that reviews a shot after it is fired. On the Solution tab, under **After the shot**, the shooter enters where the round hit and taps **Review this shot**. The phone sends the numbers it already solved plus that impact; the server builds the prompt and holds the Anthropic API key, so the key never ships in the app. It uses the official Anthropic Go SDK.
+
+The answer is structured, not free text. Claude replies through structured outputs against a fixed schema (`api/internal/advise/review.go`): a verdict (`on_call`, `within_call`, `check_wind`, `check_zero`, `check_velocity`), a one-line headline, up to four likely causes, the next step, and a caution. The server checks the reply against that schema again before sending it on. The app draws it as a card (`Features/ShotReviewCard.swift`), and every number on the card (the impact plot, the miss in inches, the drift figures) comes from the phone's solver, not from the model.
+
+In the app, the server address must be `https://`, and the development token is kept in the Keychain.
 
 ```sh
 cd api && go test ./...
@@ -99,4 +103,4 @@ The UI is black with a single rose gold accent, tabular numbers, and no decorati
 - **Azimuth is magnetic.** Coriolis uses it as if it were true north until a declination model is added. ([#1](https://github.com/jdothoffman/BalizticZero/issues/1))
 - **Elevation lookup is stubbed.** `ElevationProviding` exists but nothing is connected, so altitude comes from GPS or is typed in. ([#3](https://github.com/jdothoffman/BalizticZero/issues/3))
 - **Weather wind is for the area, against a magnetic azimuth.** Apple Weather's wind direction is relative to true north while the shot azimuth is magnetic, so the wind angle is off by the local declination until [#1](https://github.com/jdothoffman/BalizticZero/issues/1) lands. Area wind is also not the wind on your line; treat it as a starting point.
-- **The app does not call the advisor yet.** The API in `api/` is built, but `BallisticAdvising` in the app is still a placeholder and the button is hidden. ([#4](https://github.com/jdothoffman/BalizticZero/issues/4))
+- **Shot reviews are not saved.** Each review replaces the last one. Keeping a short history per load profile would show when several shots trend the same way.

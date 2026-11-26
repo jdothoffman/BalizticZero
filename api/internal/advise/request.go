@@ -22,6 +22,10 @@ type Request struct {
 	CoriolisHorizontalIn float64 `json:"coriolisHorizontalInches"`
 	CoriolisVerticalIn   float64 `json:"coriolisVerticalInches"`
 	WindDriftInches      float64 `json:"aerodynamicWindageInches"`
+	// Impact from the point of aim after the shooter fired the solved correction.
+	// Positive elevation is high. Positive windage is right.
+	ImpactHighMOA  float64 `json:"impactHighMOA"`
+	ImpactRightMOA float64 `json:"impactRightMOA"`
 }
 
 func (r Request) Validate() error {

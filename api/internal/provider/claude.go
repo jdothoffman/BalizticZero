@@ -37,15 +37,20 @@ func NewClaude(key, model, baseURL string, httpClient *http.Client) *Claude {
 
 func (c *Claude) Name() string { return "claude" }
 
-func (c *Claude) Advise(ctx context.Context, system, user string) (string, error) {
+func (c *Claude) Advise(ctx context.Context, prompt Prompt) (string, error) {
+	output := anthropic.BetaOutputConfigParam{Effort: anthropic.BetaOutputConfigEffortLow}
+	if len(prompt.Schema) > 0 {
+		// Structured outputs: the reply is constrained to this schema.
+		output.Format = anthropic.BetaJSONOutputFormatParam{Schema: prompt.Schema}
+	}
 	message, err := c.client.Beta.Messages.New(ctx, anthropic.BetaMessageNewParams{
 		Model: c.model,
 		// Thinking is on by default and counts toward this limit. Low effort keeps a short
 		// explanation short; the headroom keeps the answer from being cut off after thinking.
 		MaxTokens:    16000,
-		OutputConfig: anthropic.BetaOutputConfigParam{Effort: anthropic.BetaOutputConfigEffortLow},
-		System:       []anthropic.BetaTextBlockParam{{Text: system}},
-		Messages:     []anthropic.BetaMessageParam{anthropic.NewBetaUserMessage(anthropic.NewBetaTextBlock(user))},
+		OutputConfig: output,
+		System:       []anthropic.BetaTextBlockParam{{Text: prompt.System}},
+		Messages:     []anthropic.BetaMessageParam{anthropic.NewBetaUserMessage(anthropic.NewBetaTextBlock(prompt.User))},
 		// A safety decline is retried server-side on the model Anthropic recommends for its category.
 		Fallbacks: anthropic.BetaFallbacksParamOfDefault(),
 		Betas:     []anthropic.AnthropicBeta{anthropic.AnthropicBetaServerSideFallback2026_07_01},

@@ -35,12 +35,14 @@ type chatResponse struct {
 
 func (g *Grok) Name() string { return "grok" }
 
-func (g *Grok) Advise(ctx context.Context, system, user string) (string, error) {
+// Advise sends the prompt as chat messages. The schema is not sent; the system prompt
+// already describes the reply, and the caller validates it.
+func (g *Grok) Advise(ctx context.Context, prompt Prompt) (string, error) {
 	body, err := json.Marshal(chatRequest{
 		Model: g.model,
 		Messages: []chatMessage{
-			{Role: "system", Content: system},
-			{Role: "user", Content: user},
+			{Role: "system", Content: prompt.System},
+			{Role: "user", Content: prompt.User},
 		},
 	})
 	if err != nil {

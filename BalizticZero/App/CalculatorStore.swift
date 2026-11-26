@@ -27,10 +27,37 @@ final class CalculatorStore {
     private(set) var weatherMessage: String?
     private(set) var isFetchingWeather = false
     private(set) var weatherAttribution: WeatherSourceAttribution?
+    /// Origin of the advisor server, such as https://advisor.example.com. Must be https.
+    var advisorURL: String = UserDefaults.standard.string(forKey: Keys.advisorURL) ?? "" {
+        didSet { UserDefaults.standard.set(advisorURL, forKey: Keys.advisorURL) }
+    }
+    /// Development token the phone sends. This is not the Anthropic key. Kept in the Keychain.
+    var advisorToken = "" {
+        didSet { tokenStore.write(advisorToken.trimmingCharacters(in: .whitespacesAndNewlines)) }
+    }
+    /// Where the shooter held on the target, set by dragging the aim marker.
+    var aimPoint = AngularPoint()
+    /// Where the round hit on the target, set by dragging the impact marker.
+    var impactPoint = AngularPoint()
+    /// The miss from the point of aim. Positive is high. Setting it moves the impact marker.
+    var impactHighMOA: Double {
+        get { impactPoint.highMOA - aimPoint.highMOA }
+        set { impactPoint.highMOA = aimPoint.highMOA + newValue }
+    }
+    /// The miss from the point of aim. Positive is right. Setting it moves the impact marker.
+    var impactRightMOA: Double {
+        get { impactPoint.rightMOA - aimPoint.rightMOA }
+        set { impactPoint.rightMOA = aimPoint.rightMOA + newValue }
+    }
+    private(set) var shotReview: ShotReviewResult?
+    /// Why the last review failed, shown under the button.
+    private(set) var shotReviewError: String?
+    private(set) var isReviewingShot = false
 
     let weatherProvider: any WeatherProviding
     let elevationProvider: any ElevationProviding
     let advisor: any BallisticAdvising
+    let tokenStore: any AdvisorTokenStoring
     let sensors: SensorService
 
     private let context: ModelContext
@@ -42,13 +69,16 @@ final class CalculatorStore {
         context: ModelContext,
         weatherProvider: any WeatherProviding = UnconfiguredWeatherProvider(),
         elevationProvider: any ElevationProviding = UnconfiguredElevationProvider(),
-        advisor: any BallisticAdvising = UnavailableBallisticAdvisor()
+        advisor: any BallisticAdvising = RemoteBallisticAdvisor(),
+        tokenStore: any AdvisorTokenStoring = KeychainAdvisorTokenStore()
     ) {
         self.context = context
         self.weatherProvider = weatherProvider
         self.elevationProvider = elevationProvider
         self.advisor = advisor
+        self.tokenStore = tokenStore
         sensors = SensorService()
+        advisorToken = tokenStore.loadMovingLegacyDefault(key: Keys.advisorToken)
         if let stored = UserDefaults.standard.string(forKey: Keys.profileID) {
             selectedProfileID = UUID(uuidString: stored)
         }
@@ -287,6 +317,74 @@ final class CalculatorStore {
         }
     }
 
+    func reviewShot() async {
+        guard !isReviewingShot else { return }
+        shotReviewError = nil
+        guard let solution else {
+            shotReviewError = "Calculate a solution before reviewing a shot."
+            return
+        }
+        let token = advisorToken.trimmingCharacters(in: .whitespacesAndNewlines)
+        let baseURL: URL
+        do {
+            baseURL = try AdvisorError.validatedBaseURL(advisorURL)
+            guard !token.isEmpty else { throw AdvisorError.notConfigured }
+        } catch {
+            shotReviewError = error.localizedDescription
+            return
+        }
+        let shot = AdvisorShot(
+            rangeYards: solution.target.rangeYards,
+            azimuthDegrees: azimuthDegrees,
+            inclineDegrees: inclineDegrees,
+            // About a kilometre is plenty for the advisor; Coriolis was already solved on the phone.
+            latitudeDegrees: Self.coarse(latitude),
+            longitudeDegrees: Self.coarse(longitude),
+            temperatureF: temperatureF,
+            stationPressureInHg: pressureInHg,
+            humidityPercent: humidityPercent,
+            altitudeFeet: altitudeFeet,
+            windSpeedMph: windSpeedMph,
+            windFromDegrees: windFromDegrees,
+            comeUpMOA: solution.target.comeUpMOA,
+            windageMOA: solution.target.windageMOA,
+            spinDriftInches: solution.spinDriftInches,
+            coriolisHorizontalInches: solution.coriolisHorizontalInches,
+            coriolisVerticalInches: solution.coriolisVerticalInches,
+            aerodynamicWindageInches: solution.aerodynamicWindageInches,
+            impactHighMOA: impactHighMOA,
+            impactRightMOA: impactRightMOA
+        )
+        isReviewingShot = true
+        shotReview = nil
+        defer { isReviewingShot = false }
+        do {
+            let review = try await advisor.review(shot, baseURL: baseURL, token: token)
+            shotReview = ShotReviewResult(
+                review: review,
+                reviewedAt: .now,
+                rangeYards: shot.rangeYards,
+                impactHighMOA: shot.impactHighMOA,
+                impactRightMOA: shot.impactRightMOA,
+                windDriftInches: shot.aerodynamicWindageInches,
+                spinDriftInches: shot.spinDriftInches
+            )
+        } catch {
+            shotReviewError = error.localizedDescription
+        }
+    }
+
+    /// Puts both markers back on the centre of the target.
+    func resetShotMarks() {
+        aimPoint = AngularPoint()
+        impactPoint = AngularPoint()
+    }
+
+    /// Rounds a coordinate to two decimal places.
+    nonisolated static func coarse(_ degrees: Double) -> Double {
+        (degrees * 100).rounded() / 100
+    }
+
     func loadWeatherAttribution() async {
         guard weatherProvider.isConfigured, weatherAttribution == nil else { return }
         weatherAttribution = await weatherProvider.attribution()
@@ -346,5 +444,7 @@ final class CalculatorStore {
     private enum Keys {
         static let useMetric = "useMetric"
         static let profileID = "selectedProfileID"
+        static let advisorURL = "advisorURL"
+        static let advisorToken = "advisorToken"
     }
 }

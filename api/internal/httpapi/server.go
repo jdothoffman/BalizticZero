@@ -95,7 +95,7 @@ func (s *Server) advise(w http.ResponseWriter, r *http.Request) {
 	}
 
 	system, user := advise.Prompt(shot)
-	text, err := s.Advisor.Advise(r.Context(), system, user)
+	text, err := s.Advisor.Advise(r.Context(), provider.Prompt{System: system, User: user, Schema: advise.Schema})
 	if err != nil {
 		s.log.Printf("advise provider=%s err=%s", s.Advisor.Name(), err)
 		status := http.StatusBadGateway
@@ -105,7 +105,18 @@ func (s *Server) advise(w http.ResponseWriter, r *http.Request) {
 		writeJSON(w, status, errorBody{Error: "advisor is unavailable"})
 		return
 	}
-	writeJSON(w, http.StatusOK, map[string]string{"text": text})
+	review, err := advise.ParseReview(text)
+	if err != nil {
+		// Log why, not the reply itself: it is model output about the user's location and shot.
+		s.log.Printf("advise provider=%s unreadable review (%d bytes): %s", s.Advisor.Name(), len(text), err)
+		writeJSON(w, http.StatusBadGateway, errorBody{Error: "the advisor's answer could not be read; try again"})
+		return
+	}
+	writeJSON(w, http.StatusOK, reviewBody{Review: review})
+}
+
+type reviewBody struct {
+	Review advise.Review `json:"review"`
 }
 
 func authorized(r *http.Request, token string) bool {

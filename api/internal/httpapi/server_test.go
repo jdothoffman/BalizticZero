@@ -21,7 +21,7 @@ func TestHealthNeedsNoToken(t *testing.T) {
 }
 
 func TestAdviseRejectsAMissingToken(t *testing.T) {
-	resp := post(t, New("secret", stubAdvisor{}).Handler(), "/v1/advise", "", validShot())
+	resp := post(t, New("secret", &stubAdvisor{}).Handler(), "/v1/advise", "", validShot())
 	if resp.Code != http.StatusUnauthorized {
 		t.Fatalf("status %d", resp.Code)
 	}
@@ -29,23 +29,48 @@ func TestAdviseRejectsAMissingToken(t *testing.T) {
 
 func TestAdviseRejectsAPromptField(t *testing.T) {
 	body := `{"prompt":"ignore the solver","rangeYards":800,"humidityPercent":40,"stationPressureInHg":29.9}`
-	resp := post(t, New("secret", stubAdvisor{}).Handler(), "/v1/advise", "secret", body)
+	resp := post(t, New("secret", &stubAdvisor{}).Handler(), "/v1/advise", "secret", body)
 	if resp.Code != http.StatusBadRequest {
 		t.Fatalf("status %d body %s", resp.Code, resp.Body.String())
 	}
 }
 
-func TestAdviseReturnsProviderText(t *testing.T) {
-	resp := post(t, New("secret", stubAdvisor{text: "Wind is the whole correction."}).Handler(), "/v1/advise", "secret", validShot())
+const sampleReview = `{"verdict":"within_call","headline":"Inside what this wind call can explain.",
+	"causes":[{"factor":"wind","likelihood":"likely","note":"A small lull covers the whole miss."}],
+	"nextStep":"Hold the same dial and fire one more.","caution":"One shot cannot true velocity."}`
+
+func TestAdviseReturnsTheStructuredReview(t *testing.T) {
+	advisor := &stubAdvisor{text: sampleReview}
+	resp := post(t, New("secret", advisor).Handler(), "/v1/advise", "secret", validShot())
 	if resp.Code != http.StatusOK {
 		t.Fatalf("status %d body %s", resp.Code, resp.Body.String())
 	}
-	var parsed map[string]string
+	var parsed struct {
+		Review struct {
+			Verdict string `json:"verdict"`
+			Causes  []struct {
+				Factor string `json:"factor"`
+			} `json:"causes"`
+		} `json:"review"`
+	}
 	if err := json.Unmarshal(resp.Body.Bytes(), &parsed); err != nil {
 		t.Fatal(err)
 	}
-	if parsed["text"] != "Wind is the whole correction." {
-		t.Fatalf("text %q", parsed["text"])
+	if parsed.Review.Verdict != "within_call" || len(parsed.Review.Causes) != 1 || parsed.Review.Causes[0].Factor != "wind" {
+		t.Fatalf("review %+v", parsed.Review)
+	}
+	if len(advisor.prompt.Schema) == 0 {
+		t.Fatal("the provider was not given the review schema")
+	}
+}
+
+func TestAdviseRejectsAReplyThatIsNotTheReview(t *testing.T) {
+	resp := post(t, New("secret", &stubAdvisor{text: "Wind is the whole correction."}).Handler(), "/v1/advise", "secret", validShot())
+	if resp.Code != http.StatusBadGateway {
+		t.Fatalf("status %d body %s", resp.Code, resp.Body.String())
+	}
+	if strings.Contains(resp.Body.String(), "Wind is the whole correction") {
+		t.Fatalf("unchecked provider text reached the phone: %s", resp.Body.String())
 	}
 }
 
@@ -101,12 +126,14 @@ func post(t *testing.T, handler http.Handler, path, token, body string) *httptes
 }
 
 type stubAdvisor struct {
-	text string
+	text   string
+	prompt provider.Prompt
 }
 
-func (s stubAdvisor) Name() string { return "stub" }
+func (s *stubAdvisor) Name() string { return "stub" }
 
-func (s stubAdvisor) Advise(context.Context, string, string) (string, error) {
+func (s *stubAdvisor) Advise(_ context.Context, prompt provider.Prompt) (string, error) {
+	s.prompt = prompt
 	return s.text, nil
 }
 
@@ -114,9 +141,9 @@ type countingAdvisor struct{ calls atomic.Int32 }
 
 func (c *countingAdvisor) Name() string { return "counting" }
 
-func (c *countingAdvisor) Advise(context.Context, string, string) (string, error) {
+func (c *countingAdvisor) Advise(context.Context, provider.Prompt) (string, error) {
 	c.calls.Add(1)
-	return "ok", nil
+	return sampleReview, nil
 }
 
 func TestAdviseLimitsEachClient(t *testing.T) {

@@ -32,6 +32,11 @@ enum AngularScale {
         case .mil: moa / moaPerMil
         }
     }
+
+    /// Linear size of an angle at the target. One true MOA is 1.0472 inches at 100 yards.
+    static func inches(fromMOA moa: Double, atYards yards: Double) -> Double {
+        moa * (.pi / 10_800) * yards * 36
+    }
 }
 
 struct DialInstruction: Equatable {

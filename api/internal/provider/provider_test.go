@@ -6,6 +6,7 @@ import (
 	"io"
 	"net/http"
 	"net/http/httptest"
+	"reflect"
 	"strings"
 	"testing"
 
@@ -37,7 +38,7 @@ func TestGrokSendsTheKeyAndReturnsTheText(t *testing.T) {
 	defer upstream.Close()
 
 	grok := &Grok{key: "secret-key", model: "grok-test", client: upstream.Client(), url: upstream.URL}
-	text, err := grok.Advise(context.Background(), "system", "user facts")
+	text, err := grok.Advise(context.Background(), Prompt{System: "system", User: "user facts"})
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -58,7 +59,7 @@ func TestClaudeHidesTheProviderBodyOnFailure(t *testing.T) {
 	defer upstream.Close()
 
 	claude := NewClaude("anthropic-key", "claude-test", upstream.URL, upstream.Client())
-	_, err := claude.Advise(context.Background(), "system", "user facts")
+	_, err := claude.Advise(context.Background(), Prompt{System: "system", User: "user facts"})
 	if err == nil {
 		t.Fatal("expected an error")
 	}
@@ -94,7 +95,7 @@ func TestClaudeSkipsThinkingAndSendsTheKey(t *testing.T) {
 	defer upstream.Close()
 
 	claude := NewClaude("anthropic-key", "claude-test", upstream.URL, upstream.Client())
-	text, err := claude.Advise(context.Background(), "system", "user facts")
+	text, err := claude.Advise(context.Background(), Prompt{System: "system", User: "user facts"})
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -129,8 +130,67 @@ func TestClaudeReportsARefusalInsteadOfEmptyText(t *testing.T) {
 	defer upstream.Close()
 
 	claude := NewClaude("anthropic-key", "claude-test", upstream.URL, upstream.Client())
-	_, err := claude.Advise(context.Background(), "system", "user facts")
+	_, err := claude.Advise(context.Background(), Prompt{System: "system", User: "user facts"})
 	if err == nil || !strings.Contains(err.Error(), "declined") {
 		t.Fatalf("got %v", err)
+	}
+}
+
+func TestClaudeConstrainsTheReplyToTheSchema(t *testing.T) {
+	var gotBody map[string]any
+	upstream := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		body, _ := io.ReadAll(r.Body)
+		_ = json.Unmarshal(body, &gotBody)
+		w.Header().Set("Content-Type", "application/json")
+		_, _ = w.Write([]byte(`{
+			"id": "msg_test", "type": "message", "role": "assistant", "model": "claude-test",
+			"content": [{"type": "text", "text": "{\"ok\":true}"}],
+			"stop_reason": "end_turn",
+			"usage": {"input_tokens": 10, "output_tokens": 5}
+		}`))
+	}))
+	defer upstream.Close()
+
+	schema := json.RawMessage(`{"type":"object","additionalProperties":false,"required":["ok"],"properties":{"ok":{"type":"boolean"}}}`)
+	claude := NewClaude("anthropic-key", "claude-test", upstream.URL, upstream.Client())
+	text, err := claude.Advise(context.Background(), Prompt{System: "system", User: "user facts", Schema: schema})
+	if err != nil {
+		t.Fatal(err)
+	}
+	if text != `{"ok":true}` {
+		t.Fatalf("text %q", text)
+	}
+	config, _ := gotBody["output_config"].(map[string]any)
+	format, _ := config["format"].(map[string]any)
+	if format["type"] != "json_schema" {
+		t.Fatalf("output_config %v", gotBody["output_config"])
+	}
+	var want any
+	_ = json.Unmarshal(schema, &want)
+	if !reflect.DeepEqual(format["schema"], want) {
+		t.Fatalf("schema sent %v", format["schema"])
+	}
+	if config["effort"] != "low" {
+		t.Fatalf("effort dropped when the format was added: %v", config)
+	}
+}
+
+func TestClaudeOmitsTheFormatWithoutASchema(t *testing.T) {
+	var gotBody map[string]any
+	upstream := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		body, _ := io.ReadAll(r.Body)
+		_ = json.Unmarshal(body, &gotBody)
+		w.Header().Set("Content-Type", "application/json")
+		_, _ = w.Write([]byte(`{"id":"m","type":"message","role":"assistant","model":"claude-test",
+			"content":[{"type":"text","text":"plain"}],"stop_reason":"end_turn","usage":{"input_tokens":1,"output_tokens":1}}`))
+	}))
+	defer upstream.Close()
+
+	claude := NewClaude("anthropic-key", "claude-test", upstream.URL, upstream.Client())
+	if _, err := claude.Advise(context.Background(), Prompt{System: "system", User: "user"}); err != nil {
+		t.Fatal(err)
+	}
+	if config, _ := gotBody["output_config"].(map[string]any); config["format"] != nil {
+		t.Fatalf("format sent without a schema: %v", config)
 	}
 }

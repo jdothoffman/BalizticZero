@@ -9,6 +9,8 @@
 /* Begin PBXBuildFile section */
 		002B9DE3588B72A950411CDB /* TrajectorySolverTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40845D62BB00974842BFB3C0 /* TrajectorySolverTests.swift */; };
 		0A845F75053D717EF07FDF70 /* TrajectoryTableView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA0F2DDA56C0B1BD5EA44FEF /* TrajectoryTableView.swift */; };
+		0ABBC7CB0D356B8222F59F98 /* ShotReviewCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = E07C1A5FC9007BB37D1D1E92 /* ShotReviewCard.swift */; };
+		0D126E6A62C7EB50B16C86F7 /* AngularPoint.swift in Sources */ = {isa = PBXBuildFile; fileRef = E334EC32250DDAA82F34CBEB /* AngularPoint.swift */; };
 		104F94A43DB5F10D47B91FA2 /* ElevationProviding.swift in Sources */ = {isa = PBXBuildFile; fileRef = 883E6DA401A9808917069BD6 /* ElevationProviding.swift */; };
 		193FB80DDDF8879054CF6DFF /* RootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7C3202124FDF4AA471749B8 /* RootView.swift */; };
 		1BDB40593F9B19B8090665E6 /* Coriolis.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D71F99B4DF7A73D08045CBF /* Coriolis.swift */; };
@@ -17,11 +19,12 @@
 		24A65A65E4C79C4DDDE4C8F8 /* FiringSolution.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAC09BCED7B2AD5F0EE9D03A /* FiringSolution.swift */; };
 		2667C16DC6C260A5BC44F560 /* WeatherProviding.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2B795ABB3F9386E27FB5001F /* WeatherProviding.swift */; };
 		2B44864E4C546ABC350982AC /* AtmosphereModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 838420DBEED3727BC220E2DD /* AtmosphereModel.swift */; };
-		2F6E8641CC7FA1D7B0B80749 /* BallisticAdvising.swift in Sources */ = {isa = PBXBuildFile; fileRef = E72A0E48CB97DDCA4F461CCC /* BallisticAdvising.swift */; };
+		33DAC5B6C27E1770B8032F53 /* ShotReview.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62289FC0BB32FB4D90AA210E /* ShotReview.swift */; };
 		368A12160BD347F5E7D5C7C8 /* Atmosphere.swift in Sources */ = {isa = PBXBuildFile; fileRef = 30BD682E722831B4262310CC /* Atmosphere.swift */; };
 		454263CAAD44B87533F29188 /* CalculatorStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = B9DA3788D53779DE29F050B2 /* CalculatorStore.swift */; };
 		46C16F822B9B069E4E47D87F /* LoadCatalogTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 67B0F3EAEFB21A9D257E3DD2 /* LoadCatalogTests.swift */; };
 		4D8A6294F2026477988AD6E6 /* Theme.swift in Sources */ = {isa = PBXBuildFile; fileRef = A941BBAD3A8EA2096DA60D96 /* Theme.swift */; };
+		53EE4A339347D0EAC3B28826 /* ImpactTargetPicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 692A9CC448A9B62405740C87 /* ImpactTargetPicker.swift */; };
 		5AAAACAD9F3C59E2C01C9C51 /* DragTable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52F97435269C77F4C6BA9BA5 /* DragTable.swift */; };
 		6A7AEC871CE4F357352077C5 /* SensorService.swift in Sources */ = {isa = PBXBuildFile; fileRef = A406651435D6D2B0F8C7CDB8 /* SensorService.swift */; };
 		6C08CCCB37F457EC2F47820F /* ScopeDialTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 719C5C2521A3FCC3546E7450 /* ScopeDialTests.swift */; };
@@ -33,11 +36,14 @@
 		94B73FC0E002E52FD0A95437 /* ScopeDial.swift in Sources */ = {isa = PBXBuildFile; fileRef = 234D34DE1F419778051DE941 /* ScopeDial.swift */; };
 		9CD1F755DFBFD4C0D0A43BD9 /* WeatherKitProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4ACB640991B7568D35E6538E /* WeatherKitProvider.swift */; };
 		9D16F9E5125BD78423B15FDF /* LoadCatalog.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66FBE9613BCEE2921894B925 /* LoadCatalog.swift */; };
+		A862187DE67D32A14853809C /* AdvisorClientTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 954FD563000A903E410C89CF /* AdvisorClientTests.swift */; };
 		B807DB3305AF634CAEC0E33C /* SpinDrift.swift in Sources */ = {isa = PBXBuildFile; fileRef = E27590133B8422FB48B8CA6A /* SpinDrift.swift */; };
 		C176FE829AC969249E78037A /* DisplayFormat.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3E7DC1712B2F24CEE7126F72 /* DisplayFormat.swift */; };
 		C87CD225F611EC37611CB30D /* TrajectorySolver.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE4D32847AA4EE1858D4A8E9 /* TrajectorySolver.swift */; };
 		DA9D2623BD8BA05E8479348B /* Wind.swift in Sources */ = {isa = PBXBuildFile; fileRef = 24E6B8CBCD63F776E531C4BA /* Wind.swift */; };
+		EF932590640F9420DC9127AA /* AdvisorTokenStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6DF169BB5243C0DB76898A18 /* AdvisorTokenStore.swift */; };
 		F7A6738F23DC73F256A18DA0 /* LoadProfile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FF5CB032DE8D2288CF91869 /* LoadProfile.swift */; };
+		FEE5CCDA398E557622AF1D5F /* RemoteBallisticAdvisor.swift in Sources */ = {isa = PBXBuildFile; fileRef = A50C4DE81A7DE2A384694D4B /* RemoteBallisticAdvisor.swift */; };
 		FFB58D03BDCDF6ADC3EBC6C0 /* EnvironmentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 38BB82C8153F61C9BB607BD5 /* EnvironmentView.swift */; };
 /* End PBXBuildFile section */
 
@@ -65,14 +71,19 @@
 		4FF5CB032DE8D2288CF91869 /* LoadProfile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoadProfile.swift; sourceTree = "<group>"; };
 		52F97435269C77F4C6BA9BA5 /* DragTable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DragTable.swift; sourceTree = "<group>"; };
 		5D084ECC98A0D00D0F513DB5 /* WeatherTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeatherTests.swift; sourceTree = "<group>"; };
+		62289FC0BB32FB4D90AA210E /* ShotReview.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShotReview.swift; sourceTree = "<group>"; };
 		66FBE9613BCEE2921894B925 /* LoadCatalog.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoadCatalog.swift; sourceTree = "<group>"; };
 		67B0F3EAEFB21A9D257E3DD2 /* LoadCatalogTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoadCatalogTests.swift; sourceTree = "<group>"; };
+		692A9CC448A9B62405740C87 /* ImpactTargetPicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImpactTargetPicker.swift; sourceTree = "<group>"; };
+		6DF169BB5243C0DB76898A18 /* AdvisorTokenStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AdvisorTokenStore.swift; sourceTree = "<group>"; };
 		711CB55F964505D8DD830933 /* BalizticZeroApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BalizticZeroApp.swift; sourceTree = "<group>"; };
 		719C5C2521A3FCC3546E7450 /* ScopeDialTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScopeDialTests.swift; sourceTree = "<group>"; };
 		838420DBEED3727BC220E2DD /* AtmosphereModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AtmosphereModel.swift; sourceTree = "<group>"; };
 		883E6DA401A9808917069BD6 /* ElevationProviding.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ElevationProviding.swift; sourceTree = "<group>"; };
+		954FD563000A903E410C89CF /* AdvisorClientTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AdvisorClientTests.swift; sourceTree = "<group>"; };
 		9D71F99B4DF7A73D08045CBF /* Coriolis.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Coriolis.swift; sourceTree = "<group>"; };
 		A406651435D6D2B0F8C7CDB8 /* SensorService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SensorService.swift; sourceTree = "<group>"; };
+		A50C4DE81A7DE2A384694D4B /* RemoteBallisticAdvisor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RemoteBallisticAdvisor.swift; sourceTree = "<group>"; };
 		A8B80EFDE28D9B3E1EB6692F /* BalizticZeroTests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = BalizticZeroTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		A941BBAD3A8EA2096DA60D96 /* Theme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Theme.swift; sourceTree = "<group>"; };
 		AAC09BCED7B2AD5F0EE9D03A /* FiringSolution.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FiringSolution.swift; sourceTree = "<group>"; };
@@ -81,8 +92,9 @@
 		B9DA3788D53779DE29F050B2 /* CalculatorStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalculatorStore.swift; sourceTree = "<group>"; };
 		D69FCD257CA18DB114D3771C /* SolutionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SolutionView.swift; sourceTree = "<group>"; };
 		D7C3202124FDF4AA471749B8 /* RootView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RootView.swift; sourceTree = "<group>"; };
+		E07C1A5FC9007BB37D1D1E92 /* ShotReviewCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShotReviewCard.swift; sourceTree = "<group>"; };
 		E27590133B8422FB48B8CA6A /* SpinDrift.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpinDrift.swift; sourceTree = "<group>"; };
-		E72A0E48CB97DDCA4F461CCC /* BallisticAdvising.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BallisticAdvising.swift; sourceTree = "<group>"; };
+		E334EC32250DDAA82F34CBEB /* AngularPoint.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AngularPoint.swift; sourceTree = "<group>"; };
 		EBF19D78EA1199203C088A60 /* LoadView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoadView.swift; sourceTree = "<group>"; };
 		EE4D32847AA4EE1858D4A8E9 /* TrajectorySolver.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrajectorySolver.swift; sourceTree = "<group>"; };
 		FA0F2DDA56C0B1BD5EA44FEF /* TrajectoryTableView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrajectoryTableView.swift; sourceTree = "<group>"; };
@@ -92,7 +104,9 @@
 		161B253C534E0A051AE70F79 /* AI */ = {
 			isa = PBXGroup;
 			children = (
-				E72A0E48CB97DDCA4F461CCC /* BallisticAdvising.swift */,
+				6DF169BB5243C0DB76898A18 /* AdvisorTokenStore.swift */,
+				A50C4DE81A7DE2A384694D4B /* RemoteBallisticAdvisor.swift */,
+				62289FC0BB32FB4D90AA210E /* ShotReview.swift */,
 			);
 			path = AI;
 			sourceTree = "<group>";
@@ -109,6 +123,7 @@
 		420FCED23EED5B7FBCDEA886 /* Models */ = {
 			isa = PBXGroup;
 			children = (
+				E334EC32250DDAA82F34CBEB /* AngularPoint.swift */,
 				30BD682E722831B4262310CC /* Atmosphere.swift */,
 				AAC09BCED7B2AD5F0EE9D03A /* FiringSolution.swift */,
 				66FBE9613BCEE2921894B925 /* LoadCatalog.swift */,
@@ -138,6 +153,7 @@
 		AEFCCE9D60EBAB8D95D19FD0 /* BalizticZeroTests */ = {
 			isa = PBXGroup;
 			children = (
+				954FD563000A903E410C89CF /* AdvisorClientTests.swift */,
 				67B0F3EAEFB21A9D257E3DD2 /* LoadCatalogTests.swift */,
 				719C5C2521A3FCC3546E7450 /* ScopeDialTests.swift */,
 				40845D62BB00974842BFB3C0 /* TrajectorySolverTests.swift */,
@@ -160,8 +176,10 @@
 			children = (
 				3E7DC1712B2F24CEE7126F72 /* DisplayFormat.swift */,
 				38BB82C8153F61C9BB607BD5 /* EnvironmentView.swift */,
+				692A9CC448A9B62405740C87 /* ImpactTargetPicker.swift */,
 				EBF19D78EA1199203C088A60 /* LoadView.swift */,
 				D7C3202124FDF4AA471749B8 /* RootView.swift */,
+				E07C1A5FC9007BB37D1D1E92 /* ShotReviewCard.swift */,
 				3C989F40E4246DBDEDABEE0B /* ShotView.swift */,
 				D69FCD257CA18DB114D3771C /* SolutionView.swift */,
 				A941BBAD3A8EA2096DA60D96 /* Theme.swift */,
@@ -303,6 +321,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A862187DE67D32A14853809C /* AdvisorClientTests.swift in Sources */,
 				46C16F822B9B069E4E47D87F /* LoadCatalogTests.swift in Sources */,
 				6C08CCCB37F457EC2F47820F /* ScopeDialTests.swift in Sources */,
 				002B9DE3588B72A950411CDB /* TrajectorySolverTests.swift in Sources */,
@@ -314,10 +333,11 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				EF932590640F9420DC9127AA /* AdvisorTokenStore.swift in Sources */,
+				0D126E6A62C7EB50B16C86F7 /* AngularPoint.swift in Sources */,
 				368A12160BD347F5E7D5C7C8 /* Atmosphere.swift in Sources */,
 				2B44864E4C546ABC350982AC /* AtmosphereModel.swift in Sources */,
 				81000A3A44AE7FDD1566255C /* BalizticZeroApp.swift in Sources */,
-				2F6E8641CC7FA1D7B0B80749 /* BallisticAdvising.swift in Sources */,
 				454263CAAD44B87533F29188 /* CalculatorStore.swift in Sources */,
 				1BDB40593F9B19B8090665E6 /* Coriolis.swift in Sources */,
 				C176FE829AC969249E78037A /* DisplayFormat.swift in Sources */,
@@ -325,13 +345,17 @@
 				104F94A43DB5F10D47B91FA2 /* ElevationProviding.swift in Sources */,
 				FFB58D03BDCDF6ADC3EBC6C0 /* EnvironmentView.swift in Sources */,
 				24A65A65E4C79C4DDDE4C8F8 /* FiringSolution.swift in Sources */,
+				53EE4A339347D0EAC3B28826 /* ImpactTargetPicker.swift in Sources */,
 				9D16F9E5125BD78423B15FDF /* LoadCatalog.swift in Sources */,
 				F7A6738F23DC73F256A18DA0 /* LoadProfile.swift in Sources */,
 				216AE4385F74A5A40D015622 /* LoadView.swift in Sources */,
+				FEE5CCDA398E557622AF1D5F /* RemoteBallisticAdvisor.swift in Sources */,
 				193FB80DDDF8879054CF6DFF /* RootView.swift in Sources */,
 				94B73FC0E002E52FD0A95437 /* ScopeDial.swift in Sources */,
 				6A7AEC871CE4F357352077C5 /* SensorService.swift in Sources */,
 				85F2F0A6919579DA225CBC54 /* ShotContext.swift in Sources */,
+				33DAC5B6C27E1770B8032F53 /* ShotReview.swift in Sources */,
+				0ABBC7CB0D356B8222F59F98 /* ShotReviewCard.swift in Sources */,
 				88C33AA50A1FB7DC11761156 /* ShotView.swift in Sources */,
 				203538512D2AF03AA22DED3C /* SolutionView.swift in Sources */,
 				B807DB3305AF634CAEC0E33C /* SpinDrift.swift in Sources */,
