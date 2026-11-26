@@ -25,6 +25,7 @@
 		5AAAACAD9F3C59E2C01C9C51 /* DragTable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52F97435269C77F4C6BA9BA5 /* DragTable.swift */; };
 		6A7AEC871CE4F357352077C5 /* SensorService.swift in Sources */ = {isa = PBXBuildFile; fileRef = A406651435D6D2B0F8C7CDB8 /* SensorService.swift */; };
 		6C08CCCB37F457EC2F47820F /* ScopeDialTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 719C5C2521A3FCC3546E7450 /* ScopeDialTests.swift */; };
+		7C6135D128417358791AC629 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = B8EEB9EA7F4E0DDA50D50FCC /* Assets.xcassets */; };
 		7D754260B77BD444355A2730 /* WeatherTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D084ECC98A0D00D0F513DB5 /* WeatherTests.swift */; };
 		81000A3A44AE7FDD1566255C /* BalizticZeroApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 711CB55F964505D8DD830933 /* BalizticZeroApp.swift */; };
 		85F2F0A6919579DA225CBC54 /* ShotContext.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0D972113C31957B9B1A295E6 /* ShotContext.swift */; };
@@ -76,6 +77,7 @@
 		A941BBAD3A8EA2096DA60D96 /* Theme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Theme.swift; sourceTree = "<group>"; };
 		AAC09BCED7B2AD5F0EE9D03A /* FiringSolution.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FiringSolution.swift; sourceTree = "<group>"; };
 		ABA04EDA1F1543069DEDEDC5 /* BalizticZero.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = BalizticZero.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		B8EEB9EA7F4E0DDA50D50FCC /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		B9DA3788D53779DE29F050B2 /* CalculatorStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalculatorStore.swift; sourceTree = "<group>"; };
 		D69FCD257CA18DB114D3771C /* SolutionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SolutionView.swift; sourceTree = "<group>"; };
 		D7C3202124FDF4AA471749B8 /* RootView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RootView.swift; sourceTree = "<group>"; };
@@ -188,6 +190,7 @@
 				420FCED23EED5B7FBCDEA886 /* Models */,
 				47AAB401EF3DDAED8EB07F23 /* Sensors */,
 				D3F79259B06A0A965D76DC3C /* Services */,
+				B8EEB9EA7F4E0DDA50D50FCC /* Assets.xcassets */,
 				711CB55F964505D8DD830933 /* BalizticZeroApp.swift */,
 			);
 			path = BalizticZero;
@@ -232,6 +235,7 @@
 			buildConfigurationList = 48C48C574D4AC167F23ADAD2 /* Build configuration list for PBXNativeTarget "BalizticZero" */;
 			buildPhases = (
 				6E86475C6FC43E5155D055FA /* Sources */,
+				942323CC046CFD44076D706D /* Resources */,
 			);
 			buildRules = (
 			);
@@ -282,6 +286,17 @@
 			);
 		};
 /* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		942323CC046CFD44076D706D /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				7C6135D128417358791AC629 /* Assets.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		5D29166317008706E2C2891D /* Sources */ = {
