@@ -11,7 +11,58 @@ final class ScopeDialTests: XCTestCase {
         )
         XCTAssertEqual(dial.wholeTurns, 1)
         XCTAssertEqual(dial.remainderClicks, 46, accuracy: 0.05)
-        XCTAssertEqual(dial.summary, "1 turn + 46.0 clicks")
+        XCTAssertEqual(dial.turretReading, 4.6, accuracy: 0.001)
+        XCTAssertEqual(dial.summary, "1 turn + 4.6 MRAD (46.0 clicks)")
+    }
+
+    func testMRADUnderOneTurnReadsStraightOffTheTurret() {
+        let dial = ScopeDial.instruction(
+            angleMOA: 7.3 * AngularScale.moaPerMil,
+            clickUnit: .mil,
+            clickValue: 0.1,
+            travelPerTurnMOA: 10 * AngularScale.moaPerMil
+        )
+        XCTAssertEqual(dial.wholeTurns, 0)
+        XCTAssertEqual(dial.summary, "7.3 MRAD (73.0 clicks)")
+    }
+
+    func testMRADExactTurnsDropTheRemainder() {
+        let dial = ScopeDial.instruction(
+            angleMOA: 20 * AngularScale.moaPerMil,
+            clickUnit: .mil,
+            clickValue: 0.1,
+            travelPerTurnMOA: 10 * AngularScale.moaPerMil
+        )
+        XCTAssertEqual(dial.wholeTurns, 2)
+        XCTAssertEqual(dial.summary, "2 turns")
+    }
+
+    func testMOAReadingUsesQuarterMinuteDecimals() {
+        let dial = ScopeDial.instruction(angleMOA: 28.25, clickUnit: .moa, clickValue: 0.25, travelPerTurnMOA: 25)
+        XCTAssertEqual(dial.summary, "1 turn + 3.25 MOA (13.0 clicks)")
+    }
+
+    func testSwitchingTurretToMRADUsesMRADStandards() {
+        let settings = ScopeDial.turretSettings(changingFrom: .moa, to: .mil, clickValue: 0.25, travelPerTurnMOA: 25)
+        XCTAssertEqual(settings.clickValue, 0.1)
+        XCTAssertEqual(AngularScale.display(settings.travelPerTurnMOA, unit: .mil), 10, accuracy: 0.001)
+
+        let back = ScopeDial.turretSettings(changingFrom: .mil, to: .moa, clickValue: 0.1, travelPerTurnMOA: settings.travelPerTurnMOA)
+        XCTAssertEqual(back.clickValue, 0.25)
+        XCTAssertEqual(back.travelPerTurnMOA, 25, accuracy: 0.001)
+    }
+
+    func testSwitchingTurretKeepsACustomTurnAngle() {
+        let settings = ScopeDial.turretSettings(changingFrom: .moa, to: .mil, clickValue: 0.125, travelPerTurnMOA: 15)
+        XCTAssertEqual(settings.clickValue, 0.1)
+        XCTAssertEqual(settings.travelPerTurnMOA, 15)
+    }
+
+    func testSwitchingReticleToMRADUsesMRADHashes() {
+        let stored = ScopeDial.hashSpacingMIL(changingFrom: .moa, to: .mil, storedMIL: AngularScale.oneMOAInMil)
+        XCTAssertEqual(stored, 0.2, accuracy: 0.0001)
+        let custom = ScopeDial.hashSpacingMIL(changingFrom: .moa, to: .mil, storedMIL: 0.5)
+        XCTAssertEqual(custom, 0.5)
     }
 
     func testElevationTravelIncludesTheRail() {

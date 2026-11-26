@@ -37,7 +37,14 @@ enum AngularScale {
 struct DialInstruction: Equatable {
     var wholeTurns: Int
     var remainderClicks: Double
+    /// Number to set on the turret's markings after the whole turns, in the turret unit.
+    var turretReading: Double
     var summary: String
+}
+
+struct TurretSettings: Equatable {
+    var clickValue: Double
+    var travelPerTurnMOA: Double
 }
 
 struct TravelLimit: Equatable {
@@ -58,24 +65,51 @@ enum ScopeDial {
         let clicks = abs(AngularScale.display(angleMOA, unit: clickUnit)) / clickValue
         let roundedClicks = (clicks * 10).rounded() / 10
         let perTurn = AngularScale.display(travelPerTurnMOA, unit: clickUnit) / clickValue
-        guard perTurn > 0.5 else {
-            return DialInstruction(wholeTurns: 0, remainderClicks: roundedClicks, summary: clickText(roundedClicks))
+        var turns = 0
+        var remainder = roundedClicks
+        if perTurn > 0.5 {
+            turns = Int((roundedClicks / perTurn).rounded(.down))
+            remainder = roundedClicks - Double(turns) * perTurn
+            if remainder >= perTurn - 0.05 {
+                turns += 1
+                remainder = 0
+            }
         }
 
-        var turns = Int((roundedClicks / perTurn).rounded(.down))
-        var remainder = roundedClicks - Double(turns) * perTurn
-        if remainder >= perTurn - 0.05 {
-            turns += 1
-            remainder = 0
-        }
+        // The turret can only stop on a click, so the reading is the nearest click's marking.
+        let reading = remainder.rounded() * clickValue
+        let setting = "\(readingText(reading, unit: clickUnit, clickValue: clickValue)) (\(clickText(remainder)))"
         let summary: String
         if turns == 0 {
-            summary = clickText(remainder)
+            summary = setting
         } else {
-            let turnWord = turns == 1 ? "turn" : "turns"
-            summary = "\(turns) \(turnWord) + \(clickText(remainder))"
+            let turnText = "\(turns) \(turns == 1 ? "turn" : "turns")"
+            summary = remainder < 0.05 ? turnText : "\(turnText) + \(setting)"
         }
-        return DialInstruction(wholeTurns: turns, remainderClicks: remainder, summary: summary)
+        return DialInstruction(wholeTurns: turns, remainderClicks: remainder, turretReading: reading, summary: summary)
+    }
+
+    /// Turret settings after the shooter changes the turret unit. A click value only means something in its own unit, so it moves to the new unit's standard. Travel per turn moves too when it was still the old unit's standard; a value typed for a specific scope keeps its angle.
+    static func turretSettings(
+        changingFrom old: ClickUnit,
+        to new: ClickUnit,
+        clickValue: Double,
+        travelPerTurnMOA: Double
+    ) -> TurretSettings {
+        guard old != new else { return TurretSettings(clickValue: clickValue, travelPerTurnMOA: travelPerTurnMOA) }
+        let oldTurn = AngularScale.display(travelPerTurnMOA, unit: old)
+        let travel = abs(oldTurn - old.standardTravelPerTurn) < 0.01
+            ? AngularScale.moa(fromDisplay: new.standardTravelPerTurn, unit: new)
+            : travelPerTurnMOA
+        return TurretSettings(clickValue: new.standardClickValue, travelPerTurnMOA: travel)
+    }
+
+    /// Hash spacing after the shooter changes the reticle unit. The old unit's standard moves to the new unit's standard; a value typed for a specific reticle keeps its angle.
+    static func hashSpacingMIL(changingFrom old: ClickUnit, to new: ClickUnit, storedMIL: Double) -> Double {
+        guard old != new, abs(hashSpacing(storedMIL: storedMIL, unit: old) - old.standardHashSpacing) < 0.001 else {
+            return storedMIL
+        }
+        return storedHashSpacingMIL(display: new.standardHashSpacing, unit: new)
     }
 
     /// Elevation still available from the current zero. A positive rail cant points the scope down and frees more up-travel.
@@ -144,5 +178,14 @@ enum ScopeDial {
 
     private static func clickText(_ clicks: Double) -> String {
         String(format: "%.1f clicks", clicks)
+    }
+
+    /// Shows the reading with as many decimals as the click value, so 0.1 MRAD clicks read 4.6 and 0.25 MOA clicks read 3.25.
+    private static func readingText(_ reading: Double, unit: ClickUnit, clickValue: Double) -> String {
+        let decimals = (0...3).first { places in
+            let scaled = clickValue * pow(10, Double(places))
+            return abs(scaled - scaled.rounded()) < 1e-6
+        } ?? 3
+        return String(format: "%.\(decimals)f %@", reading, unit.title)
     }
 }

@@ -18,6 +18,13 @@ final class SensorService {
     private(set) var statusMessage = "Sensors are idle. Values stay editable either way."
     private(set) var altimeterAvailable = CMAltimeter.isRelativeAltitudeAvailable()
     private(set) var motionAvailable = false
+    private(set) var locationAuthorization: CLAuthorizationStatus = .notDetermined
+
+    /// The shooter has not answered the location prompt yet.
+    var locationPermissionUnasked: Bool { locationAuthorization == .notDetermined }
+
+    /// The shooter or a device policy turned location off for this app. Only Settings can turn it back on.
+    var locationBlocked: Bool { locationAuthorization == .denied || locationAuthorization == .restricted }
 
     var onUpdate: ((SensorReading) -> Void)?
     var onFinished: (() -> Void)?
@@ -32,6 +39,7 @@ final class SensorService {
 
     init() {
         motionAvailable = motion.isDeviceMotionAvailable
+        locationAuthorization = bridge.manager.authorizationStatus
         bridge.onLocation = { [weak self] location in
             Task { @MainActor in
                 self?.accept(location: location)
@@ -58,12 +66,27 @@ final class SensorService {
         gotLocation = false
         gotPressure = false
         gotHeading = false
-        statusMessage = "Reading location, magnetic heading, and pressure…"
-        bridge.start()
         startAltimeter()
+        // A denied app gets no prompt and no callback, only a cryptic error, so say so up front.
+        guard !locationBlocked else {
+            statusMessage = Self.blockedMessage
+            return
+        }
+        statusMessage = locationPermissionUnasked
+            ? "Allow location to fill latitude, altitude, and azimuth."
+            : "Reading location, magnetic heading, and pressure…"
+        bridge.start()
     }
 
-    func stopLocationAndPressure() {
+    private static let blockedMessage = "Location access is off. Turn it on in Settings, or enter latitude, altitude, and azimuth yourself."
+
+    /// True once a usable position arrived during the current reading.
+    var receivedLocation: Bool { gotLocation }
+
+    func stopLocationAndPressure(message: String? = nil) {
+        if let message {
+            statusMessage = message
+        }
         bridge.stop()
         altimeter.stopRelativeAltitudeUpdates()
     }
@@ -126,12 +149,18 @@ final class SensorService {
     }
 
     private func accept(authorization: CLAuthorizationStatus) {
+        let previous = locationAuthorization
+        locationAuthorization = authorization
+        // The delegate reports the current status as soon as it is set. Only react to real changes.
+        guard authorization != previous else { return }
         switch authorization {
         case .denied, .restricted:
-            statusMessage = "Location access is off. Enter latitude, altitude, and azimuth yourself."
-            stopLocationAndPressure()
+            statusMessage = Self.blockedMessage
+            bridge.stop()
         case .authorizedAlways, .authorizedWhenInUse:
-            statusMessage = "Reading location, magnetic heading, and pressure…"
+            statusMessage = bridge.isRunning
+                ? "Reading location, magnetic heading, and pressure…"
+                : "Location is on. Tap Use iPhone sensors to fill the fields."
         case .notDetermined:
             break
         @unknown default:
@@ -154,6 +183,7 @@ private final class LocationBridge: NSObject, CLLocationManagerDelegate {
     var onHeading: ((CLHeading) -> Void)?
     var onAuthorization: ((CLAuthorizationStatus) -> Void)?
     var onFailure: ((String) -> Void)?
+    private(set) var isRunning = false
 
     override init() {
         super.init()
@@ -164,6 +194,7 @@ private final class LocationBridge: NSObject, CLLocationManagerDelegate {
     }
 
     func start() {
+        isRunning = true
         manager.requestWhenInUseAuthorization()
         manager.startUpdatingLocation()
         if CLLocationManager.headingAvailable() {
@@ -172,6 +203,7 @@ private final class LocationBridge: NSObject, CLLocationManagerDelegate {
     }
 
     func stop() {
+        isRunning = false
         manager.stopUpdatingLocation()
         manager.stopUpdatingHeading()
     }
@@ -190,7 +222,22 @@ private final class LocationBridge: NSObject, CLLocationManagerDelegate {
     }
 
     func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
-        onFailure?(error.localizedDescription)
+        guard let error = error as? CLError else {
+            onFailure?(error.localizedDescription)
+            return
+        }
+        switch error.code {
+        case .locationUnknown:
+            // Core Location is still working on a fix and keeps trying.
+            break
+        case .denied:
+            // The authorization callback explains this one.
+            break
+        case .headingFailure:
+            onFailure?("Magnetic heading is unavailable here. Enter the azimuth yourself.")
+        default:
+            onFailure?("Location is unavailable right now. Enter latitude, altitude, and azimuth yourself.")
+        }
     }
 }
 

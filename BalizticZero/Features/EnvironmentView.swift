@@ -36,6 +36,9 @@ struct EnvironmentView: View {
                         store.usePhoneSensors()
                     }
                 }
+                if store.sensors.locationBlocked, let settings = URL(string: UIApplication.openSettingsURLString) {
+                    Link("Turn on location in Settings", destination: settings)
+                }
                 Button("Standard pressure for this altitude") {
                     store.useStandardPressure()
                 }
@@ -59,6 +62,12 @@ struct EnvironmentView: View {
         .themedForm()
         .navigationTitle("Conditions")
         .scrollDismissesKeyboard(.interactively)
+        .onAppear {
+            // First visit: ask for location here, where it is used, and fill the fields if the shooter allows it.
+            if store.sensors.locationPermissionUnasked, !store.acceptingSensors {
+                store.usePhoneSensors()
+            }
+        }
     }
 
     private var currentAtmosphere: Atmosphere {

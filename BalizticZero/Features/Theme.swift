@@ -1,15 +1,15 @@
 import SwiftUI
 
-/// One dark palette and one accent. Everything else comes from the system's semantic colors.
+/// Black with one rose gold accent. Everything else comes from the system's semantic colors.
 enum Theme {
-    /// Near-black graphite behind every screen.
-    static let background = Color(red: 0.043, green: 0.051, blue: 0.063)
-    /// Raised surface for rows and panels.
-    static let surface = Color(red: 0.094, green: 0.106, blue: 0.125)
-    /// Hairline borders and dividers.
-    static let hairline = Color.white.opacity(0.08)
-    /// Instrument amber. Used for the tint and for direction calls only.
-    static let accent = Color(red: 0.96, green: 0.65, blue: 0.20)
+    /// Pure black behind every screen.
+    static let background = Color.black
+    /// Raised surface for rows and panels, a faintly warm near-black so it sits with the accent.
+    static let surface = Color(red: 0.078, green: 0.067, blue: 0.071)
+    /// Hairline borders and dividers, a whisper of rose gold.
+    static let hairline = accent.opacity(0.14)
+    /// Rose gold (#E0A795). Used for the tint and for direction calls only.
+    static let accent = Color(red: 0.878, green: 0.655, blue: 0.584)
 
     static let cornerRadius: CGFloat = 12
 }
