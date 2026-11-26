@@ -6,10 +6,13 @@ import (
 	"errors"
 	"log"
 	"net/http"
+	"strconv"
 	"strings"
+	"time"
 
 	"github.com/jdothoffman/BalizticZero/api/internal/advise"
 	"github.com/jdothoffman/BalizticZero/api/internal/provider"
+	"github.com/jdothoffman/BalizticZero/api/internal/ratelimit"
 )
 
 // Server is the development API. The dev token is a shared secret for this
@@ -17,15 +20,31 @@ import (
 type Server struct {
 	DevToken string
 	Advisor  provider.Advisor
+	limiter  *ratelimit.Limiter
 	log      *log.Logger
 }
 
-func New(devToken string, advisor provider.Advisor) *Server {
-	return &Server{
+// Option changes a Server built by New.
+type Option func(*Server)
+
+// WithLimiter replaces the default rate limits.
+func WithLimiter(limiter *ratelimit.Limiter) Option {
+	return func(s *Server) { s.limiter = limiter }
+}
+
+// New builds the server. Rate limits are on by default (ratelimit.Defaults), so a
+// server built without options still cannot run up the provider bill.
+func New(devToken string, advisor provider.Advisor, opts ...Option) *Server {
+	s := &Server{
 		DevToken: devToken,
 		Advisor:  advisor,
+		limiter:  ratelimit.New(ratelimit.Defaults),
 		log:      log.Default(),
 	}
+	for _, opt := range opts {
+		opt(s)
+	}
+	return s
 }
 
 func (s *Server) Handler() http.Handler {
@@ -43,6 +62,13 @@ func (s *Server) health(w http.ResponseWriter, _ *http.Request) {
 }
 
 func (s *Server) advise(w http.ResponseWriter, r *http.Request) {
+	// Per-client first, before the token check, so guessing tokens is throttled too.
+	client := ratelimit.ClientKey(r)
+	if ok, wait := s.limiter.AllowClient(client); !ok {
+		s.log.Printf("advise rate limited client=%s", client)
+		tooManyRequests(w, wait, "too many requests; slow down")
+		return
+	}
 	if !authorized(r, s.DevToken) {
 		writeJSON(w, http.StatusUnauthorized, errorBody{Error: "unauthorized"})
 		return
@@ -58,6 +84,13 @@ func (s *Server) advise(w http.ResponseWriter, r *http.Request) {
 	}
 	if err := shot.Validate(); err != nil {
 		writeJSON(w, http.StatusBadRequest, errorBody{Error: err.Error()})
+		return
+	}
+
+	// The global cap counts only requests that will reach the paid provider.
+	if ok, wait := s.limiter.AllowGlobal(); !ok {
+		s.log.Printf("advise global limit reached")
+		tooManyRequests(w, wait, "the advisor is busy; try again later")
 		return
 	}
 
@@ -86,6 +119,11 @@ func authorized(r *http.Request, token string) bool {
 		return false
 	}
 	return subtle.ConstantTimeCompare([]byte(got), []byte(token)) == 1
+}
+
+func tooManyRequests(w http.ResponseWriter, wait time.Duration, message string) {
+	w.Header().Set("Retry-After", strconv.Itoa(ratelimit.RetryAfterSeconds(wait)))
+	writeJSON(w, http.StatusTooManyRequests, errorBody{Error: message})
 }
 
 type errorBody struct {

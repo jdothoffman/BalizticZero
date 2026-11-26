@@ -88,6 +88,8 @@ The "API tests" check runs gofmt, vet, the tests, and a Linux build on every pul
 
 The API reads its settings, including `ANTHROPIC_API_KEY`, from the environment (see `api/.env.example`). Never commit a real key.
 
+Requests to `/v1/advise` are rate-limited per client address (10 a minute by default) and across all callers together (200 an hour by default, counting only requests that reach Claude), so a leaked phone token can only spend so much. Over the limit, the API answers `429` with `Retry-After`. The `RATE_*` settings in `api/.env.example` change the limits; 0 turns one off.
+
 ## Design
 
 The UI is black with a single rose gold accent, tabular numbers, and no decoration. Colors and shared components (`SectionLabel`, `Panel`, `DataPanel`) live in `Features/Theme.swift`. Screens use those rather than defining their own styling.
