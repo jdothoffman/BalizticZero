@@ -94,6 +94,8 @@ The API reads its settings, including `ANTHROPIC_API_KEY`, from the environment 
 
 Requests to `/v1/advise` are rate-limited per client address (10 a minute by default) and across all callers together (200 an hour by default, counting only requests that reach Claude), so a leaked phone token can only spend so much. Over the limit, the API answers `429` with `Retry-After`. The `RATE_*` settings in `api/.env.example` change the limits; 0 turns one off.
 
+A review is capped at 50 seconds end to end, under the phone's own 60-second limit, and answers `504` when the provider is slower than that. On a deploy, the server finishes in-flight reviews before it stops.
+
 ## Design
 
 The UI is black with a single rose gold accent, tabular numbers, and no decoration. Colors and shared components (`SectionLabel`, `Panel`, `DataPanel`) live in `Features/Theme.swift`. Screens use those rather than defining their own styling.

@@ -22,9 +22,10 @@ type Claude struct {
 func NewClaude(key, model, baseURL string, httpClient *http.Client) *Claude {
 	opts := []option.RequestOption{
 		option.WithAPIKey(key),
-		// The phone waits on this call, so cap the whole attempt, retries included.
-		option.WithRequestTimeout(45 * time.Second),
-		option.WithMaxRetries(2),
+		// Per attempt. The HTTP handler caps the whole call, retries included, so one stalled
+		// attempt still leaves room for a retry, and the cap fires before the phone gives up.
+		option.WithRequestTimeout(40 * time.Second),
+		option.WithMaxRetries(1),
 	}
 	if baseURL != "" {
 		opts = append(opts, option.WithBaseURL(baseURL))
