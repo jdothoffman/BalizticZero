@@ -50,14 +50,35 @@ struct EnvironmentView: View {
             .themedRows()
 
             Section {
-                Button("Update weather") {
+                Button {
                     Task { await store.refreshWeather() }
+                } label: {
+                    HStack {
+                        Text("Update weather")
+                        Spacer()
+                        if store.isFetchingWeather {
+                            ProgressView()
+                        }
+                    }
                 }
-                .disabled(!store.weatherProvider.isConfigured)
+                .disabled(!store.weatherProvider.isConfigured || store.isFetchingWeather)
+            } header: {
+                SectionLabel("Weather")
             } footer: {
-                Text(store.weatherProvider.sourceNote)
+                VStack(alignment: .leading, spacing: 8) {
+                    if let message = store.weatherMessage {
+                        Text(message)
+                    }
+                    Text(store.weatherProvider.sourceNote)
+                    if let attribution = store.weatherAttribution {
+                        WeatherAttributionView(attribution: attribution)
+                    }
+                }
             }
             .themedRows()
+        }
+        .task {
+            await store.loadWeatherAttribution()
         }
         .themedForm()
         .navigationTitle("Conditions")
@@ -129,5 +150,27 @@ struct EnvironmentView: View {
                 store.longitude = $0
             }
         )
+    }
+}
+
+/// Apple requires its Weather mark and a link to its data sources wherever WeatherKit data appears.
+private struct WeatherAttributionView: View {
+    let attribution: WeatherSourceAttribution
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 4) {
+            AsyncImage(url: attribution.markURL) { image in
+                image
+                    .resizable()
+                    .scaledToFit()
+            } placeholder: {
+                Text(attribution.serviceName)
+                    .font(.footnote.weight(.semibold))
+            }
+            .frame(height: 14, alignment: .leading)
+            .accessibilityLabel(attribution.serviceName)
+            Link("Weather data sources", destination: attribution.legalURL)
+                .font(.footnote)
+        }
     }
 }

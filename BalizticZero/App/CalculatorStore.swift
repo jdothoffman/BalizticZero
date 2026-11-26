@@ -23,6 +23,10 @@ final class CalculatorStore {
     var acceptingSensors = false
     var statusMessage: String?
     var solution: FiringSolution?
+    /// Result of the last weather update, shown under the weather button.
+    private(set) var weatherMessage: String?
+    private(set) var isFetchingWeather = false
+    private(set) var weatherAttribution: WeatherSourceAttribution?
 
     let weatherProvider: any WeatherProviding
     let elevationProvider: any ElevationProviding
@@ -255,18 +259,37 @@ final class CalculatorStore {
     }
 
     func refreshWeather() async {
-        guard weatherProvider.isConfigured else { return }
+        guard weatherProvider.isConfigured, !isFetchingWeather else { return }
+        // 0, 0 is the untouched default, in the Gulf of Guinea. Asking for its weather would fill in nonsense.
+        guard latitude != 0 || longitude != 0 else {
+            weatherMessage = WeatherProviderError.noLocation.localizedDescription
+            return
+        }
+        isFetchingWeather = true
+        defer { isFetchingWeather = false }
         do {
-            let conditions = try await weatherProvider.fetchConditions(latitude: latitude, longitude: longitude)
+            let conditions = try await weatherProvider.fetchConditions(
+                latitude: latitude,
+                longitude: longitude,
+                altitudeFeet: altitudeFeet
+            )
             temperatureF = conditions.temperatureF
             setPressure(conditions.stationPressureInHg, source: .manual)
             humidityPercent = conditions.humidityPercent
             windSpeedMph = conditions.windSpeedMph
             windFromDegrees = conditions.windFromDegrees
             recompute()
+            let time = Date.now.formatted(date: .omitted, time: .shortened)
+            let altitude = DisplayFormat.altitude(altitudeFeet, metric: useMetric)
+            weatherMessage = "Updated at \(time). Station pressure is for an altitude of \(altitude). Update again if the altitude changes."
         } catch {
-            statusMessage = error.localizedDescription
+            weatherMessage = error.localizedDescription
         }
+    }
+
+    func loadWeatherAttribution() async {
+        guard weatherProvider.isConfigured, weatherAttribution == nil else { return }
+        weatherAttribution = await weatherProvider.attribution()
     }
 
     func updateProfile(_ keyPath: ReferenceWritableKeyPath<LoadProfile, Double>, to value: Double) {
