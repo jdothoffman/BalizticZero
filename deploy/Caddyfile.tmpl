@@ -1,0 +1,28 @@
+# Rendered by deploy/deploy.sh with the VM's Azure DNS name in place of __FQDN__.
+# Only port 443 is open in the Azure firewall, so certificates come from the TLS-ALPN challenge.
+{
+	auto_https disable_redirects
+}
+
+__FQDN__ {
+	tls {
+		issuer acme {
+			disable_http_challenge
+		}
+	}
+
+	request_body {
+		max_size 64KB
+	}
+
+	header {
+		-Server
+		Strict-Transport-Security "max-age=31536000"
+	}
+
+	reverse_proxy 127.0.0.1:8080
+
+	log {
+		output stdout
+	}
+}

@@ -1,0 +1,41 @@
+[Unit]
+Description=Baliztic Zero advisor API
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+User=baliztic
+Group=baliztic
+# Secrets and settings. Root-owned, mode 600; systemd reads it before dropping to the service user.
+EnvironmentFile=/etc/baliztic-api/env
+WorkingDirectory=/opt/baliztic-api
+ExecStart=/opt/baliztic-api/baliztic-api
+Restart=on-failure
+RestartSec=2
+
+# The process only needs outbound HTTPS to the AI provider and a loopback listener for Caddy.
+NoNewPrivileges=yes
+CapabilityBoundingSet=
+AmbientCapabilities=
+ProtectSystem=strict
+ProtectHome=yes
+PrivateTmp=yes
+PrivateDevices=yes
+ProtectKernelTunables=yes
+ProtectKernelModules=yes
+ProtectKernelLogs=yes
+ProtectControlGroups=yes
+ProtectClock=yes
+ProtectHostname=yes
+RestrictAddressFamilies=AF_INET AF_INET6 AF_UNIX
+RestrictNamespaces=yes
+RestrictRealtime=yes
+RestrictSUIDSGID=yes
+LockPersonality=yes
+MemoryDenyWriteExecute=yes
+SystemCallArchitectures=native
+SystemCallFilter=@system-service
+UMask=0077
+
+[Install]
+WantedBy=multi-user.target
