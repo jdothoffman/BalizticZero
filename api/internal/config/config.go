@@ -3,7 +3,10 @@ package config
 import (
 	"fmt"
 	"os"
+	"strconv"
 	"strings"
+
+	"github.com/jdothoffman/BalizticZero/api/internal/ratelimit"
 )
 
 // Config is everything the process needs. Provider keys are read from the
@@ -15,6 +18,7 @@ type Config struct {
 	Model        string
 	XAIKey       string
 	AnthropicKey string
+	Limits       ratelimit.Limits
 }
 
 func FromEnv() (Config, error) {
@@ -29,6 +33,11 @@ func FromEnv() (Config, error) {
 	if cfg.DevToken == "" {
 		return Config{}, fmt.Errorf("DEV_TOKEN is required")
 	}
+	limits, err := limitsFromEnv()
+	if err != nil {
+		return Config{}, err
+	}
+	cfg.Limits = limits
 	if cfg.Provider == "claude" {
 		if cfg.AnthropicKey == "" {
 			return Config{}, fmt.Errorf("ANTHROPIC_API_KEY is required")
@@ -63,6 +72,44 @@ func LoadDotEnv(path string) {
 		}
 		_ = os.Setenv(key, value)
 	}
+}
+
+// limitsFromEnv reads the rate limits. Unset values keep ratelimit.Defaults; 0 turns a limit off.
+func limitsFromEnv() (ratelimit.Limits, error) {
+	limits := ratelimit.Defaults
+	floats := []struct {
+		key string
+		dst *float64
+	}{
+		{"RATE_PER_MINUTE", &limits.PerClientPerMinute},
+		{"RATE_GLOBAL_PER_HOUR", &limits.GlobalPerHour},
+	}
+	for _, f := range floats {
+		if raw := strings.TrimSpace(os.Getenv(f.key)); raw != "" {
+			value, err := strconv.ParseFloat(raw, 64)
+			if err != nil || value < 0 {
+				return ratelimit.Limits{}, fmt.Errorf("%s must be a number of 0 or more", f.key)
+			}
+			*f.dst = value
+		}
+	}
+	ints := []struct {
+		key string
+		dst *int
+	}{
+		{"RATE_BURST", &limits.PerClientBurst},
+		{"RATE_GLOBAL_BURST", &limits.GlobalBurst},
+	}
+	for _, i := range ints {
+		if raw := strings.TrimSpace(os.Getenv(i.key)); raw != "" {
+			value, err := strconv.Atoi(raw)
+			if err != nil || value < 1 {
+				return ratelimit.Limits{}, fmt.Errorf("%s must be a whole number of 1 or more", i.key)
+			}
+			*i.dst = value
+		}
+	}
+	return limits, nil
 }
 
 func env(key, fallback string) string {

@@ -8,6 +8,7 @@ import (
 	"github.com/jdothoffman/BalizticZero/api/internal/config"
 	"github.com/jdothoffman/BalizticZero/api/internal/httpapi"
 	"github.com/jdothoffman/BalizticZero/api/internal/provider"
+	"github.com/jdothoffman/BalizticZero/api/internal/ratelimit"
 )
 
 func main() {
@@ -21,7 +22,7 @@ func main() {
 		log.Fatal(err)
 	}
 
-	server := httpapi.New(cfg.DevToken, advisor)
+	server := httpapi.New(cfg.DevToken, advisor, httpapi.WithLimiter(ratelimit.New(cfg.Limits)))
 	httpServer := &http.Server{
 		Addr:              cfg.Addr,
 		Handler:           server.Handler(),
@@ -31,7 +32,9 @@ func main() {
 		WriteTimeout: 60 * time.Second,
 		IdleTimeout:  60 * time.Second,
 	}
-	log.Printf("listening on %s provider=%s", cfg.Addr, advisor.Name())
+	log.Printf("listening on %s provider=%s limits: %.0f/min per client (burst %d), %.0f/hour overall (burst %d)",
+		cfg.Addr, advisor.Name(),
+		cfg.Limits.PerClientPerMinute, cfg.Limits.PerClientBurst, cfg.Limits.GlobalPerHour, cfg.Limits.GlobalBurst)
 	if err := httpServer.ListenAndServe(); err != nil {
 		log.Fatal(err)
 	}

@@ -6,9 +6,11 @@ import (
 	"net/http"
 	"net/http/httptest"
 	"strings"
+	"sync/atomic"
 	"testing"
 
 	"github.com/jdothoffman/BalizticZero/api/internal/provider"
+	"github.com/jdothoffman/BalizticZero/api/internal/ratelimit"
 )
 
 func TestHealthNeedsNoToken(t *testing.T) {
@@ -106,4 +108,77 @@ func (s stubAdvisor) Name() string { return "stub" }
 
 func (s stubAdvisor) Advise(context.Context, string, string) (string, error) {
 	return s.text, nil
+}
+
+type countingAdvisor struct{ calls atomic.Int32 }
+
+func (c *countingAdvisor) Name() string { return "counting" }
+
+func (c *countingAdvisor) Advise(context.Context, string, string) (string, error) {
+	c.calls.Add(1)
+	return "ok", nil
+}
+
+func TestAdviseLimitsEachClient(t *testing.T) {
+	advisor := &countingAdvisor{}
+	limiter := ratelimit.New(ratelimit.Limits{PerClientPerMinute: 1, PerClientBurst: 2})
+	handler := New("secret", advisor, WithLimiter(limiter)).Handler()
+
+	for i := 0; i < 2; i++ {
+		if resp := post(t, handler, "/v1/advise", "secret", validShot()); resp.Code != http.StatusOK {
+			t.Fatalf("request %d: status %d", i+1, resp.Code)
+		}
+	}
+	resp := post(t, handler, "/v1/advise", "secret", validShot())
+	if resp.Code != http.StatusTooManyRequests {
+		t.Fatalf("third request: status %d", resp.Code)
+	}
+	if resp.Header().Get("Retry-After") == "" {
+		t.Fatal("429 without Retry-After")
+	}
+	if got := advisor.calls.Load(); got != 2 {
+		t.Fatalf("provider called %d times, want 2", got)
+	}
+}
+
+func TestAdviseThrottlesTokenGuessing(t *testing.T) {
+	limiter := ratelimit.New(ratelimit.Limits{PerClientPerMinute: 1, PerClientBurst: 1})
+	handler := New("secret", &countingAdvisor{}, WithLimiter(limiter)).Handler()
+
+	if resp := post(t, handler, "/v1/advise", "wrong", validShot()); resp.Code != http.StatusUnauthorized {
+		t.Fatalf("first guess: status %d", resp.Code)
+	}
+	if resp := post(t, handler, "/v1/advise", "wrong-again", validShot()); resp.Code != http.StatusTooManyRequests {
+		t.Fatalf("second guess: status %d", resp.Code)
+	}
+}
+
+func TestGlobalCapCountsOnlyRequestsThatReachTheProvider(t *testing.T) {
+	advisor := &countingAdvisor{}
+	limiter := ratelimit.New(ratelimit.Limits{GlobalPerHour: 1, GlobalBurst: 1})
+	handler := New("secret", advisor, WithLimiter(limiter)).Handler()
+
+	// Unauthorized and malformed requests must not use up the shared budget.
+	post(t, handler, "/v1/advise", "wrong", validShot())
+	post(t, handler, "/v1/advise", "secret", `{"rangeYards": 0, "stationPressureInHg": 29.9}`)
+
+	if resp := post(t, handler, "/v1/advise", "secret", validShot()); resp.Code != http.StatusOK {
+		t.Fatalf("first valid request: status %d body %s", resp.Code, resp.Body.String())
+	}
+	if resp := post(t, handler, "/v1/advise", "secret", validShot()); resp.Code != http.StatusTooManyRequests {
+		t.Fatalf("over the global cap: status %d", resp.Code)
+	}
+	if got := advisor.calls.Load(); got != 1 {
+		t.Fatalf("provider called %d times, want 1", got)
+	}
+}
+
+func TestHealthIsNotRateLimited(t *testing.T) {
+	limiter := ratelimit.New(ratelimit.Limits{PerClientPerMinute: 1, PerClientBurst: 1, GlobalPerHour: 1, GlobalBurst: 1})
+	handler := New("secret", provider.Unconfigured{}, WithLimiter(limiter)).Handler()
+	for i := 0; i < 5; i++ {
+		if resp := get(t, handler, "/healthz", ""); resp.Code != http.StatusOK {
+			t.Fatalf("health check %d: status %d", i+1, resp.Code)
+		}
+	}
 }

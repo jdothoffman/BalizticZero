@@ -1,8 +1,11 @@
 module github.com/jdothoffman/BalizticZero/api
 
-go 1.25
+go 1.26.0
 
-require github.com/anthropics/anthropic-sdk-go/v2 v2.15.0
+require (
+	github.com/anthropics/anthropic-sdk-go/v2 v2.15.0
+	golang.org/x/time v0.16.0
+)
 
 require (
 	github.com/bahlo/generic-list-go v0.2.0 // indirect
