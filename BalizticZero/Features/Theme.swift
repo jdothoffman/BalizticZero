@@ -10,6 +10,8 @@ enum Theme {
     static let hairline = accent.opacity(0.14)
     /// Rose gold (#E0A795). Used for the tint and for direction calls only.
     static let accent = Color(red: 0.878, green: 0.655, blue: 0.584)
+    /// Warm amber for advisor verdicts that ask the shooter to check an input.
+    static let caution = Color(red: 0.949, green: 0.722, blue: 0.341)
 
     static let cornerRadius: CGFloat = 12
 }

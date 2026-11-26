@@ -2,6 +2,8 @@ import SwiftUI
 
 struct SolutionView: View {
     @Bindable var store: CalculatorStore
+    /// Scrolling pauses while a marker on the impact target is being dragged.
+    @State private var isDraggingMarker = false
 
     var body: some View {
         ScrollView {
@@ -30,6 +32,13 @@ struct SolutionView: View {
                     }
                     DataPanel(title: "At target", rows: flightFacts(solution.target))
                     DataPanel(title: "What moved the impact", rows: breakdown(solution))
+                    afterShot
+                    if store.isReviewingShot {
+                        reviewingPlaceholder
+                    } else if let result = store.shotReview {
+                        ShotReviewCard(result: result, unit: leadUnit, metric: store.useMetric)
+                            .transition(.opacity.combined(with: .move(edge: .bottom)))
+                    }
                 } else {
                     ContentUnavailableView(
                         "No solution",
@@ -39,12 +48,6 @@ struct SolutionView: View {
                     .padding(.top, 60)
                 }
 
-                if store.advisor.isAvailable {
-                    Button("Ask AI") {
-                        Task { _ = await store.advisor.explain(solution: store.solution ?? emptySolution) }
-                    }
-                }
-
                 Text("Estimate only. Confirm with live fire.")
                     .font(.footnote)
                     .foregroundStyle(.secondary)
@@ -52,7 +55,9 @@ struct SolutionView: View {
             }
             .frame(maxWidth: .infinity, alignment: .leading)
             .padding(16)
+            .animation(.easeOut(duration: 0.25), value: store.isReviewingShot)
         }
+        .scrollDisabled(isDraggingMarker)
         .background(Theme.background)
         .navigationTitle("Solution")
     }
@@ -211,6 +216,163 @@ struct SolutionView: View {
         ]
     }
 
+    private var afterShot: some View {
+        Panel(title: "After the shot") {
+            VStack(alignment: .leading, spacing: 12) {
+                Text("Fire the dialed correction. Drag the crosshair to where you held and the dot to where the round hit, or tap where it hit.")
+                    .font(.footnote)
+                    .foregroundStyle(.secondary)
+                    .fixedSize(horizontal: false, vertical: true)
+                ImpactTargetPicker(aim: $store.aimPoint, impact: $store.impactPoint, unit: leadUnit, isDraggingMarker: $isDraggingMarker)
+                missReadout
+                DisclosureGroup("Type the miss instead") {
+                    VStack(alignment: .leading, spacing: 10) {
+                        missField("Elevation", value: impactHighBinding)
+                        missField("Windage", value: impactRightBinding)
+                        Text("Positive elevation is high. Positive windage is right.")
+                            .font(.footnote)
+                            .foregroundStyle(.secondary)
+                    }
+                    .padding(.top, 8)
+                }
+                .font(.subheadline)
+                .tint(Theme.accent)
+                Button {
+                    Task { await store.reviewShot() }
+                } label: {
+                    if store.isReviewingShot {
+                        ProgressView()
+                            .frame(maxWidth: .infinity)
+                    } else {
+                        Text("Review this shot")
+                            .frame(maxWidth: .infinity)
+                    }
+                }
+                .buttonStyle(.borderedProminent)
+                .tint(Theme.accent)
+                .disabled(store.isReviewingShot)
+                if let message = store.shotReviewError {
+                    Label(message, systemImage: "exclamationmark.triangle")
+                        .font(.footnote)
+                        .foregroundStyle(Theme.caution)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                        .fixedSize(horizontal: false, vertical: true)
+                }
+                DisclosureGroup("Advisor server") {
+                    TextField("https://your-server", text: $store.advisorURL)
+                        .textInputAutocapitalization(.never)
+                        .keyboardType(.URL)
+                        .autocorrectionDisabled()
+                    SecureField("Development token", text: $store.advisorToken)
+                }
+                .font(.subheadline)
+                .tint(Theme.accent)
+                Text("The address and development token identify this app to your server. The Anthropic key stays there.")
+                    .font(.footnote)
+                    .foregroundStyle(.secondary)
+            }
+            .padding(16)
+        }
+    }
+
+    /// The miss in the scope's unit, and in inches or centimetres at the target.
+    private var missReadout: some View {
+        let high = store.impactHighMOA
+        let right = store.impactRightMOA
+        let onCall = abs(high) < 0.005 && abs(right) < 0.005
+        let range = store.solution?.target.rangeYards ?? store.rangeYards
+        return VStack(alignment: .leading, spacing: 2) {
+            HStack(alignment: .firstTextBaseline) {
+                Text("Miss")
+                    .foregroundStyle(.secondary)
+                Spacer()
+                Text(onCall ? "On the point of aim" : angularMiss(high: high, right: right))
+                    .monospacedDigit()
+            }
+            .font(.subheadline)
+            if !onCall {
+                Text(linearMiss(high: high, right: right, rangeYards: range))
+                    .font(.footnote)
+                    .foregroundStyle(.secondary)
+                    .monospacedDigit()
+                    .frame(maxWidth: .infinity, alignment: .trailing)
+            }
+        }
+        .accessibilityElement(children: .combine)
+    }
+
+    private func angularMiss(high: Double, right: Double) -> String {
+        var parts: [String] = []
+        if abs(right) >= 0.005 {
+            parts.append(String(format: "%.2f %@ %@", AngularScale.display(abs(right), unit: leadUnit), leadUnit.title, right > 0 ? "right" : "left"))
+        }
+        if abs(high) >= 0.005 {
+            parts.append(String(format: "%.2f %@ %@", AngularScale.display(abs(high), unit: leadUnit), leadUnit.title, high > 0 ? "high" : "low"))
+        }
+        return parts.joined(separator: " · ")
+    }
+
+    private func linearMiss(high: Double, right: Double, rangeYards: Double) -> String {
+        var parts: [String] = []
+        let rightInches = AngularScale.inches(fromMOA: right, atYards: rangeYards)
+        let highInches = AngularScale.inches(fromMOA: high, atYards: rangeYards)
+        if abs(right) >= 0.005 {
+            parts.append(DisplayFormat.drop(abs(rightInches), metric: store.useMetric) + (right > 0 ? " right" : " left"))
+        }
+        if abs(high) >= 0.005 {
+            parts.append(DisplayFormat.drop(abs(highInches), metric: store.useMetric) + (high > 0 ? " high" : " low"))
+        }
+        return parts.joined(separator: ", ") + " at " + DisplayFormat.distance(rangeYards, metric: store.useMetric)
+    }
+
+    private var reviewingPlaceholder: some View {
+        Panel(title: "Shot review") {
+            HStack(spacing: 12) {
+                ProgressView()
+                VStack(alignment: .leading, spacing: 2) {
+                    Text("Reviewing the shot")
+                        .font(.subheadline)
+                    Text("This can take up to 45 seconds.")
+                        .font(.footnote)
+                        .foregroundStyle(.secondary)
+                }
+            }
+            .padding(16)
+        }
+    }
+
+    private var impactHighBinding: Binding<Double> {
+        Binding(
+            get: { AngularScale.display(store.impactHighMOA, unit: leadUnit) },
+            set: { store.impactHighMOA = AngularScale.moa(fromDisplay: $0, unit: leadUnit) }
+        )
+    }
+
+    private var impactRightBinding: Binding<Double> {
+        Binding(
+            get: { AngularScale.display(store.impactRightMOA, unit: leadUnit) },
+            set: { store.impactRightMOA = AngularScale.moa(fromDisplay: $0, unit: leadUnit) }
+        )
+    }
+
+    private func missField(_ title: String, value: Binding<Double>) -> some View {
+        LabeledContent {
+            HStack(spacing: 8) {
+                TextField(title, value: value, format: .number.precision(.fractionLength(0...2)).sign(strategy: .automatic))
+                    .keyboardType(.numbersAndPunctuation)
+                    .multilineTextAlignment(.trailing)
+                    .monospacedDigit()
+                Text(leadUnit.title)
+                    .font(.footnote)
+                    .foregroundStyle(.secondary)
+                    .frame(minWidth: 36, alignment: .leading)
+            }
+        } label: {
+            Text(title)
+                .foregroundStyle(.secondary)
+        }
+    }
+
     private func lateral(_ inches: Double) -> String {
         let magnitude = DisplayFormat.drop(abs(inches), metric: store.useMetric)
         if abs(inches) < 0.05 { return magnitude }
@@ -221,20 +383,5 @@ struct SolutionView: View {
         let magnitude = DisplayFormat.drop(abs(inches), metric: store.useMetric)
         if abs(inches) < 0.05 { return magnitude }
         return inches > 0 ? "\(magnitude) up" : "\(magnitude) down"
-    }
-
-    private var emptySolution: FiringSolution {
-        let row = TrajectoryRow(
-            rangeYards: 0, pathInches: 0, comeUpMOA: 0, comeUpMIL: 0,
-            windageInches: 0, windageMOA: 0, windageMIL: 0,
-            velocityFps: 0, energyFootPounds: 0, timeSeconds: 0,
-            elevationClicks: 0, windageClicks: 0
-        )
-        return FiringSolution(
-            rows: [], target: row, zeroAngleMOA: 0, densityRatio: 0,
-            densityAltitudeFeet: 0, speedOfSoundFps: 0, spinDriftInches: 0,
-            coriolisHorizontalInches: 0, coriolisVerticalInches: 0,
-            aerodynamicWindageInches: 0
-        )
     }
 }

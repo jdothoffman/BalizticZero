@@ -2,6 +2,7 @@ package provider
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 	"net/http"
 	"time"
@@ -9,11 +10,19 @@ import (
 	"github.com/jdothoffman/BalizticZero/api/internal/config"
 )
 
+// Prompt is what the server asks a provider. Schema, when set, is the JSON schema the
+// reply must match; a provider that can enforce it does, and the caller checks it anyway.
+type Prompt struct {
+	System string
+	User   string
+	Schema json.RawMessage
+}
+
 // Advisor calls one model provider. Implementations add the provider key
 // themselves. Callers pass the prompt and receive text.
 type Advisor interface {
 	Name() string
-	Advise(ctx context.Context, system, user string) (string, error)
+	Advise(ctx context.Context, prompt Prompt) (string, error)
 }
 
 // Unconfigured keeps the process serving health checks before a provider is chosen.
@@ -21,7 +30,7 @@ type Unconfigured struct{}
 
 func (Unconfigured) Name() string { return "none" }
 
-func (Unconfigured) Advise(context.Context, string, string) (string, error) {
+func (Unconfigured) Advise(context.Context, Prompt) (string, error) {
 	return "", fmt.Errorf("no AI provider is configured")
 }
 
