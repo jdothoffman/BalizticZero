@@ -3,11 +3,13 @@ package httpapi
 import (
 	"context"
 	"encoding/json"
+	"fmt"
 	"net/http"
 	"net/http/httptest"
 	"strings"
 	"sync/atomic"
 	"testing"
+	"time"
 
 	"github.com/jdothoffman/BalizticZero/api/internal/provider"
 	"github.com/jdothoffman/BalizticZero/api/internal/ratelimit"
@@ -207,5 +209,54 @@ func TestHealthIsNotRateLimited(t *testing.T) {
 		if resp := get(t, handler, "/healthz", ""); resp.Code != http.StatusOK {
 			t.Fatalf("health check %d: status %d", i+1, resp.Code)
 		}
+	}
+}
+
+// blockingAdvisor never answers, like a provider that has stalled.
+type blockingAdvisor struct {
+	sawDeadline atomic.Bool
+}
+
+func (b *blockingAdvisor) Name() string { return "blocking" }
+
+func (b *blockingAdvisor) Advise(ctx context.Context, _ provider.Prompt) (string, error) {
+	_, hasDeadline := ctx.Deadline()
+	b.sawDeadline.Store(hasDeadline)
+	<-ctx.Done()
+	return "", fmt.Errorf("provider request failed: %w", ctx.Err())
+}
+
+func TestAdviseGivesUpOnAStalledProvider(t *testing.T) {
+	advisor := &blockingAdvisor{}
+	handler := New("secret", advisor, WithProviderTimeout(50*time.Millisecond)).Handler()
+
+	start := time.Now()
+	resp := post(t, handler, "/v1/advise", "secret", validShot())
+	if elapsed := time.Since(start); elapsed > 5*time.Second {
+		t.Fatalf("the handler waited %v on a provider that never answered", elapsed)
+	}
+	if resp.Code != http.StatusGatewayTimeout {
+		t.Fatalf("status %d body %s", resp.Code, resp.Body.String())
+	}
+	if !strings.Contains(resp.Body.String(), "took too long") {
+		t.Fatalf("body %s", resp.Body.String())
+	}
+	if !advisor.sawDeadline.Load() {
+		t.Fatal("the provider was called without a deadline")
+	}
+}
+
+func TestAdviseWritesNothingOnceThePhoneHasGone(t *testing.T) {
+	handler := New("secret", &blockingAdvisor{}).Handler()
+	req := httptest.NewRequest(http.MethodPost, "/v1/advise", strings.NewReader(validShot()))
+	req.Header.Set("Authorization", "Bearer secret")
+	ctx, cancel := context.WithCancel(context.Background())
+	cancel() // The client disconnected before the provider answered.
+	req = req.WithContext(ctx)
+
+	resp := httptest.NewRecorder()
+	handler.ServeHTTP(resp, req)
+	if resp.Body.Len() != 0 {
+		t.Fatalf("wrote %q to a client that had gone", resp.Body.String())
 	}
 }

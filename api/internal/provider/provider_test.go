@@ -8,6 +8,7 @@ import (
 	"net/http/httptest"
 	"reflect"
 	"strings"
+	"sync/atomic"
 	"testing"
 
 	"github.com/jdothoffman/BalizticZero/api/internal/config"
@@ -192,5 +193,28 @@ func TestClaudeOmitsTheFormatWithoutASchema(t *testing.T) {
 	}
 	if config, _ := gotBody["output_config"].(map[string]any); config["format"] != nil {
 		t.Fatalf("format sent without a schema: %v", config)
+	}
+}
+
+// Overloaded (529) and 5xx replies are retried once, then given up, so a bad hour at the
+// provider costs one extra attempt per review and not three.
+func TestClaudeRetriesOnceWhenTheProviderIsOverloaded(t *testing.T) {
+	var calls atomic.Int32
+	upstream := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		calls.Add(1)
+		w.Header().Set("Retry-After-Ms", "1")
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(529)
+		_, _ = w.Write([]byte(`{"type":"error","error":{"type":"overloaded_error","message":"Overloaded"}}`))
+	}))
+	defer upstream.Close()
+
+	claude := NewClaude("anthropic-key", "claude-test", upstream.URL, upstream.Client())
+	_, err := claude.Advise(context.Background(), Prompt{System: "system", User: "user facts"})
+	if err == nil || !strings.Contains(err.Error(), "529") {
+		t.Fatalf("got %v", err)
+	}
+	if got := calls.Load(); got != 2 {
+		t.Fatalf("provider called %d times, want 2 (the attempt and one retry)", got)
 	}
 }

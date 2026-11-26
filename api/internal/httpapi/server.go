@@ -1,6 +1,7 @@
 package httpapi
 
 import (
+	"context"
 	"crypto/subtle"
 	"encoding/json"
 	"errors"
@@ -21,8 +22,13 @@ type Server struct {
 	DevToken string
 	Advisor  provider.Advisor
 	limiter  *ratelimit.Limiter
+	timeout  time.Duration
 	log      *log.Logger
 }
+
+// DefaultProviderTimeout caps one review end to end, retries included. The phone's own
+// request timeout is 60 seconds, so this leaves it time to read the answer.
+const DefaultProviderTimeout = 50 * time.Second
 
 // Option changes a Server built by New.
 type Option func(*Server)
@@ -32,6 +38,11 @@ func WithLimiter(limiter *ratelimit.Limiter) Option {
 	return func(s *Server) { s.limiter = limiter }
 }
 
+// WithProviderTimeout replaces DefaultProviderTimeout.
+func WithProviderTimeout(timeout time.Duration) Option {
+	return func(s *Server) { s.timeout = timeout }
+}
+
 // New builds the server. Rate limits are on by default (ratelimit.Defaults), so a
 // server built without options still cannot run up the provider bill.
 func New(devToken string, advisor provider.Advisor, opts ...Option) *Server {
@@ -39,6 +50,7 @@ func New(devToken string, advisor provider.Advisor, opts ...Option) *Server {
 		DevToken: devToken,
 		Advisor:  advisor,
 		limiter:  ratelimit.New(ratelimit.Defaults),
+		timeout:  DefaultProviderTimeout,
 		log:      log.Default(),
 	}
 	for _, opt := range opts {
@@ -95,14 +107,27 @@ func (s *Server) advise(w http.ResponseWriter, r *http.Request) {
 	}
 
 	system, user := advise.Prompt(shot)
-	text, err := s.Advisor.Advise(r.Context(), provider.Prompt{System: system, User: user, Schema: advise.Schema})
+	// One cap for the whole provider call. The SDK's timeout is per attempt and the HTTP
+	// server's write timeout does not cancel a handler, so without this a stalled provider
+	// could hold the request, and the goroutine, long after the phone had given up.
+	ctx, cancel := context.WithTimeout(r.Context(), s.timeout)
+	defer cancel()
+	text, err := s.Advisor.Advise(ctx, provider.Prompt{System: system, User: user, Schema: advise.Schema})
 	if err != nil {
+		if r.Context().Err() != nil {
+			// The phone has gone. Nobody will read a reply.
+			s.log.Printf("advise provider=%s abandoned by the client", s.Advisor.Name())
+			return
+		}
 		s.log.Printf("advise provider=%s err=%s", s.Advisor.Name(), err)
-		status := http.StatusBadGateway
-		if errors.Is(err, errUnconfigured) || s.Advisor.Name() == "none" {
+		status, message := http.StatusBadGateway, "advisor is unavailable"
+		switch {
+		case ctx.Err() != nil || errors.Is(err, context.DeadlineExceeded):
+			status, message = http.StatusGatewayTimeout, "the advisor took too long; try again"
+		case errors.Is(err, errUnconfigured) || s.Advisor.Name() == "none":
 			status = http.StatusServiceUnavailable
 		}
-		writeJSON(w, status, errorBody{Error: "advisor is unavailable"})
+		writeJSON(w, status, errorBody{Error: message})
 		return
 	}
 	review, err := advise.ParseReview(text)
