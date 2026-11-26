@@ -8,13 +8,30 @@ struct WeatherConditions: Equatable {
     var windFromDegrees: Double
 }
 
+/// What a weather source requires the app to show next to its data.
+struct WeatherSourceAttribution: Equatable {
+    var serviceName: String
+    /// Logo for a dark background.
+    var markURL: URL
+    var legalURL: URL
+}
+
 enum WeatherProviderError: LocalizedError {
     case notConfigured
+    case noLocation
+    case notAuthorized
+    case unavailable
 
     var errorDescription: String? {
         switch self {
         case .notConfigured:
             "Weather lookup is not configured."
+        case .noLocation:
+            "Set latitude and longitude first, or use the iPhone sensors."
+        case .notAuthorized:
+            "Apple Weather refused the request. WeatherKit must be enabled for this app ID in the developer portal."
+        case .unavailable:
+            "Apple Weather is unavailable right now. Enter the conditions by hand."
         }
     }
 }
@@ -26,14 +43,20 @@ enum WeatherProviderError: LocalizedError {
 protocol WeatherProviding: Sendable {
     var isConfigured: Bool { get }
     var sourceNote: String { get }
-    func fetchConditions(latitude: Double, longitude: Double) async throws -> WeatherConditions
+    /// Altitude is the rifle's, so a source that reports sea-level pressure can return station pressure.
+    func fetchConditions(latitude: Double, longitude: Double, altitudeFeet: Double) async throws -> WeatherConditions
+    func attribution() async -> WeatherSourceAttribution?
+}
+
+extension WeatherProviding {
+    func attribution() async -> WeatherSourceAttribution? { nil }
 }
 
 struct UnconfiguredWeatherProvider: WeatherProviding {
     let isConfigured = false
-    let sourceNote = "Open-Meteo and NOAA weather are not connected. Enter temperature, pressure, humidity, and wind by hand."
+    let sourceNote = "Weather lookup is not connected. Enter temperature, pressure, humidity, and wind by hand."
 
-    func fetchConditions(latitude: Double, longitude: Double) async throws -> WeatherConditions {
+    func fetchConditions(latitude: Double, longitude: Double, altitudeFeet: Double) async throws -> WeatherConditions {
         throw WeatherProviderError.notConfigured
     }
 }

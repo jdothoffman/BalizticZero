@@ -20,6 +20,12 @@ struct Atmosphere: Equatable {
         return hPa / AtmosphereModel.hPaPerInHg
     }
 
+    /// Station pressure from a sea-level (reduced) reading, using the standard atmosphere's ratio between the two heights.
+    /// Weather services report sea-level pressure so stations compare; the solver needs the air at the rifle.
+    static func stationPressureInHg(seaLevelInHg: Double, altitudeFeet: Double) -> Double {
+        seaLevelInHg * standardPressureInHg(altitudeFeet: altitudeFeet) / standardPressureInHg(altitudeFeet: 0)
+    }
+
     static func standardTemperatureF(altitudeFeet: Double) -> Double {
         59 + altitudeFeet * (-3.56616e-3)
     }

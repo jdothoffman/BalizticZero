@@ -11,7 +11,7 @@ The app has five tabs:
 | Tab | Purpose |
 | --- | --- |
 | **Shot** | Range, zero, incline (can be measured with the phone), wind speed and direction, shot azimuth. |
-| **Conditions** | Temperature, station pressure, humidity, altitude, latitude/longitude. Imperial or metric. Can fill location, altitude, and pressure from the phone's GPS and barometer. |
+| **Conditions** | Temperature, station pressure, humidity, altitude, latitude/longitude. Imperial or metric. Can fill location, altitude, and pressure from the phone's GPS and barometer, and temperature, pressure, humidity, and wind from Apple Weather. |
 | **Load** | Saved load profiles: bullet (velocity, weight, diameter, length, BC, G1/G7), rifle (sight height, zero, twist), and scope (click value, turret travel, rail cant, reticle unit, focal plane, hash spacing). |
 | **Solution** | Correction at the target in the scope's unit (MOA or MRAD), with turret turns, the turret reading to dial, and clicks. Reticle hold (including second-focal-plane scaling), travel-limit warnings, flight data, and a breakdown of wind drift, spin drift, and Coriolis. |
 | **Table** | Elevation, windage, velocity, time of flight, and energy every 100 yards. |
@@ -40,15 +40,17 @@ BalizticZero/
   Models/         Load profiles (SwiftData), atmosphere, wind, shot context, solution types
   Features/       SwiftUI screens, shared theme, display formatting
   Sensors/        CoreLocation and CoreMotion: GPS, barometer, heading, incline
-  Services/       Weather and elevation provider protocols (not yet connected)
+  Services/       Weather (Apple WeatherKit) and elevation (not yet connected) providers
   AI/             Advisor protocol placeholder (not yet connected)
-BalizticZeroTests/  Solver and scope-dial unit tests
+BalizticZeroTests/  Solver, scope-dial, and weather unit tests
 project.yml         XcodeGen spec; the .xcodeproj is generated from it
 ```
 
 ## Building
 
-Requirements: Xcode 26 and an iOS 18+ simulator or device. Code signing is turned off in the project, so set your own team to run on a phone.
+Requirements: Xcode 26 and an iOS 18+ simulator or device.
+
+The app is signed with the owner's team (`DEVELOPMENT_TEAM` in `project.yml`) because WeatherKit only answers signed builds that carry the WeatherKit entitlement, with WeatherKit enabled for the app ID `com.balizticzero.app` in the developer portal. To build under another team, change `DEVELOPMENT_TEAM` and enable WeatherKit for your own app ID. Everything except weather works unsigned.
 
 The Xcode project is generated with [XcodeGen](https://github.com/yonaskolb/XcodeGen). After adding or removing source files, regenerate it:
 
@@ -57,7 +59,7 @@ brew install xcodegen   # once
 xcodegen generate
 ```
 
-Build and test from the command line:
+Build and test from the command line. Signing needs Xcode's accounts, so either add `-allowProvisioningUpdates` or build unsigned with `CODE_SIGNING_ALLOWED=NO` (weather lookups then fail, everything else works):
 
 ```sh
 xcodebuild -project BalizticZero.xcodeproj -scheme BalizticZero \
@@ -80,6 +82,6 @@ The UI is black with a single rose gold accent, tabular numbers, and no decorati
 ## Not done yet
 
 - **Azimuth is magnetic.** Coriolis uses it as if it were true north until a declination model is added. ([#1](https://github.com/jdothoffman/BalizticZero/issues/1))
-- **Weather and elevation lookups are stubbed.** `WeatherProviding` and `ElevationProviding` have notes on free sources (Open-Meteo, NOAA), but nothing is connected. GPS and the barometer are the live sources. ([#2](https://github.com/jdothoffman/BalizticZero/issues/2), [#3](https://github.com/jdothoffman/BalizticZero/issues/3))
-- **The phone has no thermometer or humidity sensor**, so those are entered by hand until weather lookup lands. ([#2](https://github.com/jdothoffman/BalizticZero/issues/2))
+- **Elevation lookup is stubbed.** `ElevationProviding` exists but nothing is connected, so altitude comes from GPS or is typed in. ([#3](https://github.com/jdothoffman/BalizticZero/issues/3))
+- **Weather wind is for the area, against a magnetic azimuth.** Apple Weather's wind direction is relative to true north while the shot azimuth is magnetic, so the wind angle is off by the local declination until [#1](https://github.com/jdothoffman/BalizticZero/issues/1) lands. Area wind is also not the wind on your line; treat it as a starting point.
 - **The AI advisor is a placeholder.** `BallisticAdvising` exists, but the solver never calls it and the button is hidden. ([#4](https://github.com/jdothoffman/BalizticZero/issues/4))

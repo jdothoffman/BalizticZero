@@ -25,10 +25,13 @@
 		5AAAACAD9F3C59E2C01C9C51 /* DragTable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52F97435269C77F4C6BA9BA5 /* DragTable.swift */; };
 		6A7AEC871CE4F357352077C5 /* SensorService.swift in Sources */ = {isa = PBXBuildFile; fileRef = A406651435D6D2B0F8C7CDB8 /* SensorService.swift */; };
 		6C08CCCB37F457EC2F47820F /* ScopeDialTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 719C5C2521A3FCC3546E7450 /* ScopeDialTests.swift */; };
+		7C6135D128417358791AC629 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = B8EEB9EA7F4E0DDA50D50FCC /* Assets.xcassets */; };
+		7D754260B77BD444355A2730 /* WeatherTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D084ECC98A0D00D0F513DB5 /* WeatherTests.swift */; };
 		81000A3A44AE7FDD1566255C /* BalizticZeroApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 711CB55F964505D8DD830933 /* BalizticZeroApp.swift */; };
 		85F2F0A6919579DA225CBC54 /* ShotContext.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0D972113C31957B9B1A295E6 /* ShotContext.swift */; };
 		88C33AA50A1FB7DC11761156 /* ShotView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C989F40E4246DBDEDABEE0B /* ShotView.swift */; };
 		94B73FC0E002E52FD0A95437 /* ScopeDial.swift in Sources */ = {isa = PBXBuildFile; fileRef = 234D34DE1F419778051DE941 /* ScopeDial.swift */; };
+		9CD1F755DFBFD4C0D0A43BD9 /* WeatherKitProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4ACB640991B7568D35E6538E /* WeatherKitProvider.swift */; };
 		9D16F9E5125BD78423B15FDF /* LoadCatalog.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66FBE9613BCEE2921894B925 /* LoadCatalog.swift */; };
 		B807DB3305AF634CAEC0E33C /* SpinDrift.swift in Sources */ = {isa = PBXBuildFile; fileRef = E27590133B8422FB48B8CA6A /* SpinDrift.swift */; };
 		C176FE829AC969249E78037A /* DisplayFormat.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3E7DC1712B2F24CEE7126F72 /* DisplayFormat.swift */; };
@@ -58,8 +61,10 @@
 		3C989F40E4246DBDEDABEE0B /* ShotView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShotView.swift; sourceTree = "<group>"; };
 		3E7DC1712B2F24CEE7126F72 /* DisplayFormat.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DisplayFormat.swift; sourceTree = "<group>"; };
 		40845D62BB00974842BFB3C0 /* TrajectorySolverTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrajectorySolverTests.swift; sourceTree = "<group>"; };
+		4ACB640991B7568D35E6538E /* WeatherKitProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeatherKitProvider.swift; sourceTree = "<group>"; };
 		4FF5CB032DE8D2288CF91869 /* LoadProfile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoadProfile.swift; sourceTree = "<group>"; };
 		52F97435269C77F4C6BA9BA5 /* DragTable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DragTable.swift; sourceTree = "<group>"; };
+		5D084ECC98A0D00D0F513DB5 /* WeatherTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeatherTests.swift; sourceTree = "<group>"; };
 		66FBE9613BCEE2921894B925 /* LoadCatalog.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoadCatalog.swift; sourceTree = "<group>"; };
 		67B0F3EAEFB21A9D257E3DD2 /* LoadCatalogTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoadCatalogTests.swift; sourceTree = "<group>"; };
 		711CB55F964505D8DD830933 /* BalizticZeroApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BalizticZeroApp.swift; sourceTree = "<group>"; };
@@ -72,6 +77,7 @@
 		A941BBAD3A8EA2096DA60D96 /* Theme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Theme.swift; sourceTree = "<group>"; };
 		AAC09BCED7B2AD5F0EE9D03A /* FiringSolution.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FiringSolution.swift; sourceTree = "<group>"; };
 		ABA04EDA1F1543069DEDEDC5 /* BalizticZero.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = BalizticZero.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		B8EEB9EA7F4E0DDA50D50FCC /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		B9DA3788D53779DE29F050B2 /* CalculatorStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalculatorStore.swift; sourceTree = "<group>"; };
 		D69FCD257CA18DB114D3771C /* SolutionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SolutionView.swift; sourceTree = "<group>"; };
 		D7C3202124FDF4AA471749B8 /* RootView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RootView.swift; sourceTree = "<group>"; };
@@ -135,6 +141,7 @@
 				67B0F3EAEFB21A9D257E3DD2 /* LoadCatalogTests.swift */,
 				719C5C2521A3FCC3546E7450 /* ScopeDialTests.swift */,
 				40845D62BB00974842BFB3C0 /* TrajectorySolverTests.swift */,
+				5D084ECC98A0D00D0F513DB5 /* WeatherTests.swift */,
 			);
 			path = BalizticZeroTests;
 			sourceTree = "<group>";
@@ -167,6 +174,7 @@
 			isa = PBXGroup;
 			children = (
 				883E6DA401A9808917069BD6 /* ElevationProviding.swift */,
+				4ACB640991B7568D35E6538E /* WeatherKitProvider.swift */,
 				2B795ABB3F9386E27FB5001F /* WeatherProviding.swift */,
 			);
 			path = Services;
@@ -182,6 +190,7 @@
 				420FCED23EED5B7FBCDEA886 /* Models */,
 				47AAB401EF3DDAED8EB07F23 /* Sensors */,
 				D3F79259B06A0A965D76DC3C /* Services */,
+				B8EEB9EA7F4E0DDA50D50FCC /* Assets.xcassets */,
 				711CB55F964505D8DD830933 /* BalizticZeroApp.swift */,
 			);
 			path = BalizticZero;
@@ -226,6 +235,7 @@
 			buildConfigurationList = 48C48C574D4AC167F23ADAD2 /* Build configuration list for PBXNativeTarget "BalizticZero" */;
 			buildPhases = (
 				6E86475C6FC43E5155D055FA /* Sources */,
+				942323CC046CFD44076D706D /* Resources */,
 			);
 			buildRules = (
 			);
@@ -247,6 +257,14 @@
 				BuildIndependentTargetsInParallel = YES;
 				LastUpgradeCheck = 1430;
 				TargetAttributes = {
+					21B5B6C897C509193F356719 = {
+						DevelopmentTeam = TRSF93SDY9;
+						ProvisioningStyle = Automatic;
+					};
+					966886C710E56F95CA8BDC28 = {
+						DevelopmentTeam = TRSF93SDY9;
+						ProvisioningStyle = Automatic;
+					};
 				};
 			};
 			buildConfigurationList = 51801D1379433E2C0B57A132 /* Build configuration list for PBXProject "BalizticZero" */;
@@ -269,6 +287,17 @@
 		};
 /* End PBXProject section */
 
+/* Begin PBXResourcesBuildPhase section */
+		942323CC046CFD44076D706D /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				7C6135D128417358791AC629 /* Assets.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
 /* Begin PBXSourcesBuildPhase section */
 		5D29166317008706E2C2891D /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
@@ -277,6 +306,7 @@
 				46C16F822B9B069E4E47D87F /* LoadCatalogTests.swift in Sources */,
 				6C08CCCB37F457EC2F47820F /* ScopeDialTests.swift in Sources */,
 				002B9DE3588B72A950411CDB /* TrajectorySolverTests.swift in Sources */,
+				7D754260B77BD444355A2730 /* WeatherTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -308,6 +338,7 @@
 				4D8A6294F2026477988AD6E6 /* Theme.swift in Sources */,
 				C87CD225F611EC37611CB30D /* TrajectorySolver.swift in Sources */,
 				0A845F75053D717EF07FDF70 /* TrajectoryTableView.swift in Sources */,
+				9CD1F755DFBFD4C0D0A43BD9 /* WeatherKitProvider.swift in Sources */,
 				2667C16DC6C260A5BC44F560 /* WeatherProviding.swift in Sources */,
 				DA9D2623BD8BA05E8479348B /* Wind.swift in Sources */,
 			);
@@ -345,6 +376,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = BalizticZero/BalizticZero.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CURRENT_PROJECT_VERSION = 1;
 				GENERATE_INFOPLIST_FILE = YES;
@@ -397,10 +429,10 @@
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
-				CODE_SIGNING_ALLOWED = NO;
-				CODE_SIGNING_REQUIRED = NO;
+				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEVELOPMENT_TEAM = TRSF93SDY9;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
@@ -451,6 +483,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = BalizticZero/BalizticZero.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CURRENT_PROJECT_VERSION = 1;
 				GENERATE_INFOPLIST_FILE = YES;
@@ -503,10 +536,10 @@
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
-				CODE_SIGNING_ALLOWED = NO;
-				CODE_SIGNING_REQUIRED = NO;
+				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_TEAM = TRSF93SDY9;
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;

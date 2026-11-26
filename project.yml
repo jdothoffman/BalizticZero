@@ -9,8 +9,9 @@ settings:
   base:
     SWIFT_VERSION: "5.0"
     IPHONEOS_DEPLOYMENT_TARGET: "18.0"
-    CODE_SIGNING_ALLOWED: NO
-    CODE_SIGNING_REQUIRED: NO
+    # Signed by the owner's team so WeatherKit works. CI passes CODE_SIGNING_ALLOWED=NO and builds unsigned.
+    DEVELOPMENT_TEAM: TRSF93SDY9
+    CODE_SIGN_STYLE: Automatic
     ENABLE_TESTABILITY: YES
     SWIFT_STRICT_CONCURRENCY: minimal
 targets:
@@ -21,11 +22,13 @@ targets:
       - path: BalizticZero
         excludes:
           - Info.plist
+          - BalizticZero.entitlements
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: com.balizticzero.app
         PRODUCT_NAME: BalizticZero
         INFOPLIST_FILE: BalizticZero/Info.plist
+        CODE_SIGN_ENTITLEMENTS: BalizticZero/BalizticZero.entitlements
         GENERATE_INFOPLIST_FILE: YES
         MARKETING_VERSION: "1.0"
         CURRENT_PROJECT_VERSION: "1"

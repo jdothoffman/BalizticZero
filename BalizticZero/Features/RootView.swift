@@ -43,7 +43,7 @@ struct RootView: View {
         }
         .task {
             if store == nil {
-                store = CalculatorStore(context: modelContext)
+                store = CalculatorStore(context: modelContext, weatherProvider: WeatherKitProvider())
             }
         }
         .fullScreenCover(isPresented: disclaimerPresented) {
