@@ -4,3 +4,8 @@ DerivedData/
 build/
 *.xcuserstate
 .swiftpm/
+.env
+api/baliztic-api
+
+# Deployment scripts and server details stay out of this public repo.
+deploy/
